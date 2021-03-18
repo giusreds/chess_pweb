@@ -1,0 +1,264 @@
+{
+  "chessboard": [
+    [{
+        "name": "wR1",
+        "icon": "wR",
+        "type": "rook",
+        "owner": 0,
+        "firstmove": 1
+      },
+      {
+        "name": "wN1",
+        "icon": "wN",
+        "type": "knight",
+        "owner": 0
+      },
+      {
+        "name": "wB1",
+        "icon": "wB",
+        "type": "bishop",
+        "owner": 0
+      },
+      {
+        "name": "wK",
+        "icon": "wK",
+        "type": "king",
+        "owner": 0,
+        "firstmove": 1
+      },
+      {
+        "name": "wQ",
+        "icon": "wQ",
+        "type": "queen",
+        "owner": 0
+      },
+      {
+        "name": "wB2",
+        "icon": "wB",
+        "type": "bishop",
+        "owner": 0
+      },
+      {
+        "name": "wN2",
+        "icon": "wN",
+        "type": "knight",
+        "owner": 0
+      },
+      {
+        "name": "wR2",
+        "icon": "wR",
+        "type": "rook",
+        "owner": 0,
+        "firstmove": 1
+      }
+    ],
+    [{
+        "name": "wP1",
+        "icon": "wP",
+        "type": "pawn",
+        "owner": 0,
+        "firstmove": 1
+      },
+      {
+        "name": "wP2",
+        "icon": "wP",
+        "type": "pawn",
+        "owner": 0,
+        "firstmove": 1
+      },
+      {
+        "name": "wP3",
+        "icon": "wP",
+        "type": "pawn",
+        "owner": 0,
+        "firstmove": 1
+      },
+      {
+        "name": "wP4",
+        "icon": "wP",
+        "type": "pawn",
+        "owner": 0,
+        "firstmove": 1
+      },
+      {
+        "name": "wP5",
+        "icon": "wP",
+        "type": "pawn",
+        "owner": 0,
+        "firstmove": 1
+      },
+      {
+        "name": "wP6",
+        "icon": "wP",
+        "type": "pawn",
+        "owner": 0,
+        "firstmove": 1
+      },
+      {
+        "name": "wP7",
+        "icon": "wP",
+        "type": "pawn",
+        "owner": 0,
+        "firstmove": 1
+      },
+      {
+        "name": "wP8",
+        "icon": "wP",
+        "type": "pawn",
+        "owner": 0,
+        "firstmove": 1
+      }
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    [{
+        "name": "bP8",
+        "icon": "bP",
+        "type": "pawn",
+        "owner": 1,
+        "firstmove": 1
+      },
+      {
+        "name": "bP7",
+        "icon": "bP",
+        "type": "pawn",
+        "owner": 1,
+        "firstmove": 1
+      },
+      {
+        "name": "bP6",
+        "icon": "bP",
+        "type": "pawn",
+        "owner": 1,
+        "firstmove": 1
+      },
+      {
+        "name": "bP5",
+        "icon": "bP",
+        "type": "pawn",
+        "owner": 1,
+        "firstmove": 1
+      },
+      {
+        "name": "bP4",
+        "icon": "bP",
+        "type": "pawn",
+        "owner": 1,
+        "firstmove": 1
+      },
+      {
+        "name": "bP3",
+        "icon": "bP",
+        "type": "pawn",
+        "owner": 1,
+        "firstmove": 1
+      },
+      {
+        "name": "bP2",
+        "icon": "bP",
+        "type": "pawn",
+        "owner": 1,
+        "firstmove": 1
+      },
+      {
+        "name": "bP1",
+        "icon": "bP",
+        "type": "pawn",
+        "owner": 1,
+        "firstmove": 1
+      }
+    ],
+    [{
+        "name": "bR2",
+        "icon": "bR",
+        "type": "rook",
+        "owner": 1,
+        "firstmove": 1
+      },
+      {
+        "name": "bN2",
+        "icon": "bN",
+        "type": "knight",
+        "owner": 1
+      },
+      {
+        "name": "bB2",
+        "icon": "bB",
+        "type": "bishop",
+        "owner": 1
+      },
+      {
+        "name": "bK",
+        "icon": "bK",
+        "type": "king",
+        "owner": 1,
+        "firstmove": 1
+      },
+      {
+        "name": "bQ",
+        "icon": "bQ",
+        "type": "queen",
+        "owner": 1
+      },
+      {
+        "name": "bB1",
+        "icon": "bB",
+        "type": "bishop",
+        "owner": 1
+      },
+      {
+        "name": "bN1",
+        "icon": "bN",
+        "type": "knight",
+        "owner": 1
+      },
+      {
+        "name": "bR1",
+        "icon": "bR",
+        "type": "rook",
+        "owner": 1,
+        "firstmove": 1
+      }
+    ]
+  ],
+  "captured": [],
+  "turn": 0
+}
