@@ -57,6 +57,7 @@ print $_SESSION["user"];
     <h1>Waiting...</h1>
     <div id="players_list">
     </div>
+    <a id="share_whatsapp" href="#" target="_blank">Share with WhatsApp</a>
     <p id="match_id"></p>
   </div>
   <script src="./lib/jquery-3.6.0.min.js"></script>

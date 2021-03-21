@@ -93,23 +93,15 @@ input:checked+.slider:before {
 /* Background */
 
 @font-face {
-    font-family: 'MedievalSharp';
-    font-style: normal;
-    font-weight: 400;
-    src: url('../res/font/medievalsharp-v12-latin-regular.eot');
-    /* IE9 Compat Modes */
-    src: local(''), url('../res/font/medievalsharp-v12-latin-regular.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */
-    url('../res/font/medievalsharp-v12-latin-regular.woff2') format('woff2'), /* Super Modern Browsers */
-    url('../res/font/medievalsharp-v12-latin-regular.woff') format('woff'), /* Modern Browsers */
-    url('../res/font/medievalsharp-v12-latin-regular.ttf') format('truetype'), /* Safari, Android, iOS */
-    url('../res/font/medievalsharp-v12-latin-regular.svg#MedievalSharp') format('svg');
-    /* Legacy iOS */
+    font-family: 'Pixeled';
+    src: url('../res/font/PressStart2P-Regular.ttf');
+    display: swap;
 }
 
 body {
     background-color: #AA0000;
     background-image: url(../img/background.svg);
-    font-family: "MedievalSharp", Fallback, sans-serif;
+    font-family: "Pixeled", Fallback, sans-serif;
 }
 
 #logo {
@@ -140,7 +132,7 @@ main {
     border: 3px solid #b96622;
     width: 300px;
     height: 50px;
-    font-family: "MedievalSharp", Fallback, sans-serif;
+    font-family: "Pixeled", Fallback, sans-serif;
 }
 
 .menu_btn:hover, .menu_btn:focus {

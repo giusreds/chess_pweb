@@ -9,6 +9,7 @@ $("#host").submit(function (e) {
         success: function (data) {
             $("#match_id").text(data.id);
             match_id = data.id;
+            $("#share_whatsapp").attr("href", WhatsAppLink(match_id));
             setInterval(wait, 1000);
         }
     });
@@ -23,10 +24,20 @@ $("#join").submit(function (e) {
         success: function (data) {
             match_id = data.id;
             $("#match_id").text(match_id);
+            $("#share_whatsapp").attr("href", WhatsAppLink(match_id));
             setInterval(wait, 1000);
         }
     });
 });
+
+// Temp function
+function WhatsAppLink(match_id) {
+    // For reference check WhatsApp documentation:
+    // https://faq.whatsapp.com/general/chats/how-to-use-click-to-chat/
+    var base = "https://wa.me/?text=";
+    var message = "I am playing Chess. Join my match using this code: ";
+    return base + encodeURI(message + match_id);
+}
 
 function wait() {
     $("#wait").show();

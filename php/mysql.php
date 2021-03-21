@@ -1,8 +1,8 @@
 <?php
 $mysqli = new mysqli("localhost", "root", "", "scacchi_rossi");
 
-// Verifico connessione DataBase
+// Test DataBase connection
 if (mysqli_connect_errno()) {
-	print "Connessione fallita: " . mysqli_connect_error();
+	print "Connection error: " . mysqli_connect_error();
 	exit;
 }
