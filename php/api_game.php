@@ -3,7 +3,7 @@ session_start();
 header("Content-type: application/json");
 include("./mysql.php");
 include("./rules.php");
-include("./match.php");
+include("./game.php");
 
 if (
     isset($_POST["id"]) && isset($_POST["action"])
@@ -17,8 +17,10 @@ if (
     $found = 0;
     checkTimeExceeded($match_id);
 
-    $query = "SELECT * FROM `match_team` WHERE `match_id` = '{$match_id}'";
-    $result = $mysqli->query($query);
+    $query = $mysqli->prepare("SELECT * FROM `match_team` WHERE `match_id` = ?");
+    $query->bind_param("s", $match_id);
+    $query->execute();
+    $result = $query->get_result();
     // Se la partita non esiste
     if (!$result) return false;
     while ($row = $result->fetch_array()) {
@@ -40,7 +42,6 @@ if (
         case "pull":
             $match_status = fetchMatch($result, $player_id);
             clean($match_status["chessboard"]);
-            $match_status["time"] = getTime($result["timestamp"]);
             $match_status["changed"] = 1;
             // Se l'impronta e'uguale all'ultima registrata, ritorno
             // soltanto {"r":0} per indicare di non eseguire il refresh
@@ -49,12 +50,17 @@ if (
                 $_SESSION[$match_id] == md5(json_encode($match_status))
             ) {
                 $risp["changed"] = 0;
-                echo json_encode($risp);
-                exit;
-            }
-            // Altrimenti, faccio full-refresh e aggiorno l'impronta
+                $match_status = $risp;
+            } else
+                $_SESSION[$match_id] = md5(json_encode($match_status));
+            $r_time = getTime($result["timestamp"]);
+            $match_status["time"] = ($r_time > 0) ? $r_time : 0;
+            if (isEnded($match_id)) {
+                $match_status["status"] = 0;
+                $match_status["winner"] = whoIsTheWinner($match_id, $player_id);
+            } else
+                $match_status["status"] = 1;
             echo json_encode($match_status);
-            $_SESSION[$match_id] = md5(json_encode($match_status));
             exit;
         case "check":
             if (!isset($_POST["source"])) exit;
@@ -70,7 +76,11 @@ if (
             $allowed = allowed($match_status["chessboard"], $_POST["source"]);
             // Verifico fattibilità nella matrice personalizzata
             // e verifico che sia il mio turno
-            if (in_array($_POST["destination"], $allowed) && $match_status["yourturn"]) {
+            if (
+                in_array($_POST["destination"], $allowed)
+                && $match_status["yourturn"]
+                && isMatchActive($match_id)
+            ) {
 
                 // Scacchiera e array di pedine mangiate
                 $chessboard = json_decode($result["chessboard"]);
@@ -92,10 +102,15 @@ if (
                 $number++;
                 $turn = ($player_id + 1) % 2;
                 // Aggiorno nel DataBase
-                $query = "INSERT INTO `match_log` (`id`, `number`, `turn`, `chessboard`,`captured`, `timestamp`)
-                VALUES ('{$match_id}', '{$number}', '{$turn}', '{$chessboard}', '{$captured}', CURRENT_TIMESTAMP)";
-                $mysqli->query($query);
-
+                $query = $mysqli->prepare(
+                    "INSERT INTO `match_log` (`id`, `number`, `turn`, `control`, 
+                    `chessboard`,`captured`, `timestamp`) VALUES 
+                    (?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)"
+                );
+                $query->bind_param("siiiss", $match_id, $number, $turn, $user_id, $chessboard, $captured);
+                $query->execute();
+                // Checks if match has to end
+                checkIfCheckmateDraw($match_id, $player_id, $chessboard);
                 // Se tutto ok
                 // ridondante
                 $match_status = fetchMatch($result, $player_id);

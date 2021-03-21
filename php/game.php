@@ -115,6 +115,33 @@ function checkTimeExceeded($match_id)
     setWinner($match_id, $winner);
 }
 
+// If there's checkmate or draw, ends the match
+function checkIfCheckmateDraw($match_id, $team_id, $chessboard)
+{
+    $status = isCheckMate($chessboard, "opp");
+    if (!$status) return;
+    switch ($status) {
+        case 1:
+            // If checkmate
+            $winner = $team_id;
+            break;
+        case 2:
+            // If draw
+            $winner = 2;
+            break;
+    }
+    setWinner($match_id, $winner);
+}
+
+// Checks if the match is started and not ended
+// (is currently active)
+function isMatchActive($match_id)
+{
+    if (!isEnded($match_id) && isStarted($match_id))
+        return true;
+    return false;
+}
+
 // Calculates the index in the original chessboard
 // depending on the player_id
 function index($n, $player_id)

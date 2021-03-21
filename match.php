@@ -63,10 +63,7 @@ if (!isset($_GET["id"]) || !isset($_SESSION["user_id"]) || !isMyMatch($_GET["id"
         </div>
         <div class="captured" id="captured_you"></div>
     </div>
-    <div id="collaborative">
-        <button id="request_control">REQUEST CONTROL</button>
-    </div>
-
+    
     <!-- Pawn promotion -->
     <div id="promotion">
         <form id="promotion_form">

@@ -1,6 +1,62 @@
 <?php
 
 // ---------------------------------------------------
+//              Returns allowed movements
+// ---------------------------------------------------
+
+function allowed($chessboard, $position, $owner = "you", $test = 0)
+{
+    $r = cellIndex($position)[0];
+    $c = cellIndex($position)[1];
+    $res = array();
+    // Se gli indici escono fuori dalla matrice
+    if (!innerBoard($r, $c)) return $res;
+    $current_piece = $chessboard[$r][$c];
+    // Se la cella sorgente e'vuota
+    if (!$current_piece) return $res;
+    // In base al pezzo, determino i movimenti ammessi
+    switch ($current_piece->type) {
+        case "pawn":
+            $res = pawn($chessboard, $r, $c, $owner, $test);
+            break;
+        case "rook":
+            $res = rook($chessboard, $r, $c, $owner);
+            break;
+        case "bishop":
+            $res = bishop($chessboard, $r, $c, $owner);
+            break;
+        case "queen":
+            $res = queen($chessboard, $r, $c, $owner);
+            break;
+        case "knight":
+            $res = knight($chessboard, $r, $c, $owner);
+            break;
+        case "king":
+            $res = king($chessboard, $r, $c, $owner, $test);
+            break;
+    }
+    if (!$test) {
+        $not_allowed = array();
+        // Per ogni destinazione ammessa, verifico se dopo lo spostamento
+        // ci sia una situazione di rischio per il re
+        foreach ($res as $current_allowed)
+            if (isKingInCheck(move($chessboard, array(), $position, $current_allowed, $owner)[0], $owner))
+                // Se il re e'in pericolo, salvo lo spostamento
+                // nell'array di destinazioni non consentite
+                array_push($not_allowed, $current_allowed);
+
+        // Tolgo le destinazioni non consentite dall'insieme
+        // delle destinazioni teoriche
+        foreach ($not_allowed as $current_notallowed)
+            while (($key = array_search($current_notallowed, $res)) !== false)
+                array_splice($res, $key, 1);
+        // Ritorno le destinazioni effettivamente consentite
+    }
+    return $res;
+}
+
+
+// ---------------------------------------------------
 //               Pieces movement rules
 // ---------------------------------------------------
 
@@ -220,8 +276,11 @@ function isCheckMate($chessboard, $owner = "you")
 
     foreach ($pieces as $piece)
         $allowed = array_merge($allowed, allowed($chessboard, $piece, $owner));
-
-    return count($allowed) == 0;
+    if (count($allowed) == 0) {
+        if (isKingInCheck($chessboard, $owner)) return 1;
+        return 2;
+    }
+    return 0;
 }
 
 function allMyPieces($chessboard, $owner)
@@ -326,60 +385,4 @@ function move($chessboard, $captured, $source, $dest, $onlycapture = 0, $promoti
 
     // Return
     return array($chessboard, $captured);
-}
-
-
-// ---------------------------------------------------
-//              Returns allowed movements
-// ---------------------------------------------------
-
-function allowed($chessboard, $position, $owner = "you", $test = 0)
-{
-    $r = cellIndex($position)[0];
-    $c = cellIndex($position)[1];
-    $res = array();
-    // Se gli indici escono fuori dalla matrice
-    if (!innerBoard($r, $c)) return $res;
-    $current_piece = $chessboard[$r][$c];
-    // Se la cella sorgente e'vuota
-    if (!$current_piece) return $res;
-    // In base al pezzo, determino i movimenti ammessi
-    switch ($current_piece->type) {
-        case "pawn":
-            $res = pawn($chessboard, $r, $c, $owner, $test);
-            break;
-        case "rook":
-            $res = rook($chessboard, $r, $c, $owner);
-            break;
-        case "bishop":
-            $res = bishop($chessboard, $r, $c, $owner);
-            break;
-        case "queen":
-            $res = queen($chessboard, $r, $c, $owner);
-            break;
-        case "knight":
-            $res = knight($chessboard, $r, $c, $owner);
-            break;
-        case "king":
-            $res = king($chessboard, $r, $c, $owner, $test);
-            break;
-    }
-    if (!$test) {
-        $not_allowed = array();
-        // Per ogni destinazione ammessa, verifico se dopo lo spostamento
-        // ci sia una situazione di rischio per il re
-        foreach ($res as $current_allowed)
-            if (isKingInCheck(move($chessboard, array(), $position, $current_allowed, $owner)[0], $owner))
-                // Se il re e'in pericolo, salvo lo spostamento
-                // nell'array di destinazioni non consentite
-                array_push($not_allowed, $current_allowed);
-
-        // Tolgo le destinazioni non consentite dall'insieme
-        // delle destinazioni teoriche
-        foreach ($not_allowed as $current_notallowed)
-            while (($key = array_search($current_notallowed, $res)) !== false)
-                array_splice($res, $key, 1);
-        // Ritorno le destinazioni effettivamente consentite
-    }
-    return $res;
 }
