@@ -60,6 +60,7 @@ function allowed($chessboard, $position, $owner = "you", $test = 0)
 //               Pieces movement rules
 // ---------------------------------------------------
 
+// Pawn
 function pawn($chessboard, $r, $c, $owner, $onlycapture = 0)
 {
     $response = array();
@@ -79,7 +80,7 @@ function pawn($chessboard, $r, $c, $owner, $onlycapture = 0)
                 )
                     array_push($response, cellName($r + $i, $c));
             } else break;
-    // En passant
+    // En passant capture
     if (isset($chessboard[$r][$c]->enpassant)) {
         for ($i = 0; $i < 8; $i++)
             for ($j = 0; $j < 8; $j++) {
@@ -92,7 +93,7 @@ function pawn($chessboard, $r, $c, $owner, $onlycapture = 0)
                 }
             }
     }
-
+    // Capture
     $range = array(-1, 1);
     foreach ($range as $i)
         if (
@@ -104,6 +105,7 @@ function pawn($chessboard, $r, $c, $owner, $onlycapture = 0)
     return $response;
 }
 
+// Rook
 function rook($chessboard, $r, $c, $owner)
 {
     $response = array();
@@ -122,6 +124,7 @@ function rook($chessboard, $r, $c, $owner)
     return $response;
 }
 
+// Bishop
 function bishop($chessboard, $r, $c, $owner)
 {
     $response = array();
@@ -139,13 +142,16 @@ function bishop($chessboard, $r, $c, $owner)
     return $response;
 }
 
+// Queen
 function queen($chessboard, $r, $c, $owner)
 {
+    // Union between rook and bishop movements
     $orthogonal = rook($chessboard, $r, $c, $owner);
     $diagonal = bishop($chessboard, $r, $c, $owner);
     return array_merge($orthogonal, $diagonal);
 }
 
+// Knight
 function knight($chessboard, $r, $c, $owner)
 {
     $response = array();
@@ -161,6 +167,7 @@ function knight($chessboard, $r, $c, $owner)
     return $response;
 }
 
+// King
 function king($chessboard, $r, $c, $owner, $onlycapture)
 {
     $response = array();
@@ -174,7 +181,7 @@ function king($chessboard, $r, $c, $owner, $onlycapture)
             )
                 array_push($response, cellName($r + $i, $c + $j));
 
-    // Arrocco
+    // Castling
     if (!$onlycapture && isset($chessboard[$r][$c]->firstmove)) {
         $rooks = array(0, 7);
         foreach ($rooks as $rook) {
@@ -198,8 +205,6 @@ function king($chessboard, $r, $c, $owner, $onlycapture)
     // Return
     return $response;
 }
-
-
 
 // ---------------------------------------------------
 //                Utility functions

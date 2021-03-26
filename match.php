@@ -1,27 +1,24 @@
 <?php
 session_start();
-$team = null;
-// Controlla se la partita esiste e se sono autorizzato a partecipare
-function isMyMatch($match_id, $user_id)
-{
-    include_once("./php/mysql.php");
-    global $team;
-
-    $query = "SELECT * FROM `match_team` WHERE `match_id` = '{$match_id}'";
-    $result = $mysqli->query($query);
-    // Se la partita non esiste
-    if (!$result) return false;
-    while ($row = $result->fetch_array())
-        if ($row["user"] == $user_id) {
-            $team = $row["team"];
-            return true;
-        }
-    return false;
-}
+include_once("./php/mysql.php");
+include_once("./php/game.php");
+$team = NULL;
 
 // L'ID della partita viene passato come parametro GET
 // Se non posso partecipare alla partita, reindirizza alla home
-if (!isset($_GET["id"]) || !isset($_SESSION["user_id"]) || !isMyMatch($_GET["id"], $_SESSION["user_id"]))
+if (isset($_GET["id"])) {
+    $mode = 1;
+    $match_id = $_GET["id"];
+} else if (isset($_GET["replay"])) {
+    $mode = 0;
+    $match_id = $_GET["replay"];
+} else
+    header("Location: ./");
+
+if (
+    !isset($_SESSION["user_id"])
+    || !isMyMatch($match_id, $_SESSION["user_id"])
+)
     header("Location: ./");
 ?>
 <!DOCTYPE html>
@@ -31,7 +28,7 @@ if (!isset($_GET["id"]) || !isset($_SESSION["user_id"]) || !isMyMatch($_GET["id"
 
     <title>Partita</title>
     <meta charset="UTF-8">
-    <link rel="stylesheet" href="./css/chessboard.css">
+    <link rel="stylesheet" href="./css/board.css">
 
 </head>
 
@@ -39,6 +36,7 @@ if (!isset($_GET["id"]) || !isset($_SESSION["user_id"]) || !isMyMatch($_GET["id"
     <header>
         <h1>Chess match</h1>
         <h2 id="turn"></h2>
+        <p id="time"></p>
     </header>
 
     <!-- Chess Board -->
@@ -63,7 +61,7 @@ if (!isset($_GET["id"]) || !isset($_SESSION["user_id"]) || !isMyMatch($_GET["id"
         </div>
         <div class="captured" id="captured_you"></div>
     </div>
-    
+
     <!-- Pawn promotion -->
     <div id="promotion">
         <form id="promotion_form">
@@ -77,7 +75,7 @@ if (!isset($_GET["id"]) || !isset($_SESSION["user_id"]) || !isMyMatch($_GET["id"
                 if ($piece_ == "K") $piece_ = "N";
                 return $color . $piece_;
             }
-            // Disegno i campi della form
+            // Set the radio input fields
             $pieces = array("queen", "knight", "rook", "bishop");
             foreach ($pieces as $piece) {
                 echo "<label>";
@@ -88,9 +86,29 @@ if (!isset($_GET["id"]) || !isset($_SESSION["user_id"]) || !isMyMatch($_GET["id"
             ?>
         </form>
     </div>
+
+    <?php
+    // Include buttons for replay
+    if (!$mode) : ?>
+        <div class="controls">
+            <button id="back-btn">BACK</button>
+            <button id="play-btn">PLAY</button>
+            <button id="next-btn">NEXT</button>
+        </div>
+    <?php endif; ?>
     <!-- jQuery -->
-    <script src="./lib/jquery-3.6.0.min.js"></script>
-    <script src="./js/game.js"></script>
+    <script src="./js/lib/jquery-3.6.0.min.js"></script>
+    <!-- Board -->
+    <script src="./js/board.js"></script>
+    <?php
+    // Include the right JavaScript
+    if ($mode) : ?>
+        <!-- Game -->
+        <script src="./js/game.js"></script>
+    <?php else : ?>
+        <!-- Replay -->
+        <script src="./js/replay.js"></script>
+    <?php endif; ?>
 </body>
 
 </html>

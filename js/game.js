@@ -6,11 +6,12 @@ const refresh_rate = 1600;
 var match_status = null;
 var current_clicked = null;
 
+var refresh = null;
 
 // Appena lo script viene caricato
 $(document).ready(() => {
   start("refresh");
-  var refresh = setInterval(start, refresh_rate);
+  refresh = setInterval(start, refresh_rate);
 
   for (var i = 0; i < 8; i++)
     for (var j = 0; j < 8; j++)
@@ -37,72 +38,24 @@ function start(mode = "pull") {
 
 function after(result) {
   // console.log(result);
+  $("#time").text(result.time);
+  if (result && !result.status) {
+    switch (result.winner) {
+      case "you": var msg = "You won"; break;
+      case "opp": var msg = "You lose"; break;
+      case "draw": var msg = "Match is draw"; break;
+    }
+    clearInterval(refresh);
+    alert(msg);
+    window.location.href = "./";
+  }
   if (result && result.changed) {
     match_status = result;
-    updateChessboard();
+    updateChessboard(match_status);
+    clickable();
+    // TEMPORANEO
+    turno();
   }
-}
-
-// Se non esiste, aggiunge un nuovo pezzo sulla scacchiera
-// o nelle sezioni dei pezzi mangiati
-function addPiece(father, piece, prefix = "") {
-  if (!$("#" + prefix + piece.name).length) {
-    var tmp = $("<img>").addClass("pedina")
-      .attr({
-        "id": prefix + piece.name,
-        "src": "./img/pieces/" + piece.icon + ".png",
-        "alt": piece.icon
-      }).css("opacity", 0);
-    $("#" + father).append(tmp);
-  }
-  // Aggiorno in ogni caso l'attributo "source" perche'
-  // l'icona dei pezzi puo'cambiare nel corso del gioco
-  // (promozione)
-  current_piece = $("#" + prefix + piece.name);
-  current_piece.animate({
-    "opacity": 1
-  }, 600);
-  current_piece.attr("src", "./img/pieces/" + piece.icon + ".png");
-}
-
-function updateChessboard() {
-  var pieces = match_status.chessboard;
-  // Aggiungo o aggiorno la posizione delle pedine sulla scacchiera
-  for (var i = 0; i < 8; i++)
-    for (var j = 0; j < 8; j++) {
-      // Se la cella e'vuota, passo oltre
-      if (!pieces[i][j]) continue;
-      addPiece("campo", pieces[i][j]);
-      // Imposto la posizione della pedina corrente
-      $("#" + pieces[i][j].name).css({
-        "top": 60 * i + "px",
-        "left": 60 * j + "px"
-      });
-    }
-  var mangiati = match_status.captured;
-  // Lavoro sulle pedine mangiate
-  for (var i = 0; i < mangiati.length; i++) {
-    // Se una pedina mangiata e'ancora sulla scacchiera, la elimino
-    var current_piece = $("#" + mangiati[i].name);
-    if (current_piece)
-      fadeOut(current_piece, 1000);
-    // Il padre della pedina e'scelto in base al campo "proprietario"
-    addPiece("captured_" + mangiati[i].owner, mangiati[i], "c_");
-  }
-  inCheck();
-  clickable();
-  // TEMPORANEO
-  turno();
-}
-
-
-// Rimuove un elemento con transizione
-function fadeOut(element, duration = 1000) {
-  element.animate({
-    opacity: 0,
-  }, duration, function () {
-    this.remove();
-  });
 }
 
 function clickCell() {
@@ -193,12 +146,6 @@ function viewMoves(source) {
 
 function removeDest() {
   $(".destination").removeClass("destination");
-  /*
-  var destinations = Array.from($(".destination"));
-  // console.log(destinations);
-  destinations.forEach(element => {
-    element.classList.remove("destination");
-  });*/
 }
 
 function moveTo(source, destination, promotion = null) {
@@ -233,17 +180,6 @@ function moveTo(source, destination, promotion = null) {
 function nomeCella(r, c) {
   return r.toString() + c.toString();
 }
-
-
-function inCheck() {
-  $(".incheck").removeClass("incheck");
-  var check = match_status.incheck;
-  if (check)
-    check.forEach(element => {
-      $("#" + element).addClass("incheck");
-    });
-}
-
 
 // TEMPORANEA
 

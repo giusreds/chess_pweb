@@ -5,8 +5,6 @@ include("./mysql.php");
 
 $disconnected = 6;
 
-
-
 if (!isset($_POST["action"]) || !isset($_SESSION["user_id"]))
     error("Invalid action");
 
@@ -190,8 +188,6 @@ function delete_player()
     $query->bind_param("i", $disconnected);
     $query->execute();
 }
-
-
 
 
 function ping($match_id)

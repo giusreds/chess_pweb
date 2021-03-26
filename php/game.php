@@ -1,8 +1,26 @@
 <?php
-include_once("./mysql.php");
 
 // Time in seconds for each turn
 $turn_time = 60;
+
+function isMyMatch($match_id, $user_id)
+{
+    global $mysqli;
+
+    $query = $mysqli->prepare(
+        "SELECT COUNT(*) AS `count`
+        FROM `match_team`
+        WHERE `match_id` = ?
+        AND `user` = ?"
+    );
+    $query->bind_param("si", $match_id, $user_id);
+    $query->execute();
+    $result = $query->get_result();
+    $row = $result->fetch_array();
+    if ($row["count"])
+        return true;
+    return false;
+}
 
 // Removes unnecessary attributes from pieces info
 // Used before sending chessboard to client

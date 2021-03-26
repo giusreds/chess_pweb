@@ -38,7 +38,7 @@ if (
     switch ($action) {
         case "refresh":
             // Resetto l'impronta, cosi da forzare il refresh
-            $_SESSION[$match_id] = NULL;
+            $_SESSION["h_" . $match_id] = NULL;
         case "pull":
             $match_status = fetchMatch($result, $player_id);
             clean($match_status["chessboard"]);
@@ -46,13 +46,13 @@ if (
             // Se l'impronta e'uguale all'ultima registrata, ritorno
             // soltanto {"r":0} per indicare di non eseguire il refresh
             if (
-                isset($_SESSION[$match_id]) &&
-                $_SESSION[$match_id] == md5(json_encode($match_status))
+                isset($_SESSION["h_" . $match_id]) &&
+                $_SESSION["h_" . $match_id] == md5(json_encode($match_status))
             ) {
                 $risp["changed"] = 0;
                 $match_status = $risp;
             } else
-                $_SESSION[$match_id] = md5(json_encode($match_status));
+                $_SESSION["h_" . $match_id] = md5(json_encode($match_status));
             $r_time = getTime($result["timestamp"]);
             $match_status["time"] = ($r_time > 0) ? $r_time : 0;
             if (isEnded($match_id)) {
@@ -110,6 +110,9 @@ if (
                 $query->bind_param("siiiss", $match_id, $number, $turn, $user_id, $chessboard, $captured);
                 $query->execute();
                 // Checks if match has to end
+                $result = getLastMove($match_id);
+                $match_status = fetchMatch($result, $player_id);
+                $chessboard = $match_status["chessboard"];
                 checkIfCheckmateDraw($match_id, $player_id, $chessboard);
                 // Se tutto ok
                 // ridondante
@@ -117,14 +120,14 @@ if (
                 clean($match_status["chessboard"]);
                 // Se l'impronta e'uguale all'ultima registrata, ritorno
                 // soltanto {"r":0} per indicare di non eseguire il refresh
-                if (isset($_SESSION[$match_id]) && $_SESSION[$match_id] == md5(json_encode($match_status))) {
+                if (isset($_SESSION["h_" . $match_id]) && $_SESSION["h_" . $match_id] == md5(json_encode($match_status))) {
                     $risp["changed"] = 0;
                     echo json_encode($risp);
                     exit;
                 }
                 // Altrimenti, faccio full-refresh e aggiorno l'impronta
                 echo json_encode($match_status);
-                $_SESSION[$match_id] = md5(json_encode($match_status));
+                $_SESSION["h_" . $match_id] = md5(json_encode($match_status));
             }
             exit;
     }
