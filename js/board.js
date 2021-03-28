@@ -27,7 +27,8 @@ function updateChessboard(matchStatus) {
     }
     for (var i = 0; i < 8; i++)
         for (var j = 0; j < 8; j++)
-            $("#c_" + chessboard[i][j].name).remove;
+            if (chessboard[i][j])
+                $("#c_" + chessboard[i][j].name).remove;
     inCheck(matchStatus.incheck);
 }
 

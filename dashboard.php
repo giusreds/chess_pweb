@@ -1,5 +1,6 @@
 <?php
 session_start();
+include("./php/mysql.php");
 print uniqid() . "<br>";
 if (!isset($_SESSION["user"])) {
   header("Location: ./");
@@ -24,6 +25,38 @@ print $_SESSION["user"];
   <main>
     <button class="menu_btn" id="host_btn">Host new match</button>
     <button class="menu_btn" id="join_btn">Join a match</button>
+    <section id="history">
+      <?php
+      function getHistory($user, $limit)
+      {
+        global $mysqli;
+        $query = $mysqli->prepare(
+          "SELECT DISTINCT `I`.* FROM `match_info` `I`
+          INNER JOIN `match_team` `T`
+          INNER JOIN `match_log` `L`
+          ON `T`.`match_id` = `I`.`id`
+          AND `L`.`id` = `I`.`id`
+          WHERE `T`.`user` = ?
+          GROUP BY `I`.`id` HAVING MAX(`L`.`number` > 0)
+          ORDER BY `T`.`last_ping` DESC
+          LIMIT ?"
+        );
+        $query->bind_param("ii", $user, $limit);
+        $query->execute();
+        $result = $query->get_result();
+        if (!$result) return null;
+        return $result->fetch_all(MYSQLI_ASSOC);
+      }
+
+      $list = getHistory($_SESSION["user_id"], 10);
+      foreach ($list as $match) {
+        echo '<div class="match_history" id="' . $match["id"] . '">';
+        echo '<p>' . $match["id"] . '</p>';
+        echo '<a href="./match.php?replay=' . $match["id"] . '">REPLAY</a>';
+        echo "</div>";
+      }
+      ?>
+    </section>
   </main>
   <div id="join_dialog" class="dialog">
     <div class="dialog_content">

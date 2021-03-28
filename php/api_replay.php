@@ -73,7 +73,10 @@ $query->bind_param("si", $match_id, $number);
 $query->execute();
 $match_row = $query->get_result()->fetch_array();
 
-$query = $mysqli->prepare("SELECT * FROM `match_team` WHERE `match_id` = ?");
+$query = $mysqli->prepare(
+    "SELECT * FROM `match_team` 
+    WHERE `match_id` = ?"
+);
 $query->bind_param("s", $match_id);
 $query->execute();
 $result = $query->get_result();
