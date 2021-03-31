@@ -1,29 +1,11 @@
 <?php
 session_start();
-include("./php/mysql.php");
-if (isset($_SESSION["user"]))
-  header("Location: ./dashboard.php");
-// Se sto provando ad accedere (POST)
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-  $username = $_POST["username"];
-  $password = $_POST["password"];
-
-  $query = "SELECT * FROM user WHERE `username` = '{$username}'";
-  $result = $mysqli->query($query);
-
-  $password_hash = password_hash($password, PASSWORD_BCRYPT);
-
-  if (password_verify($password, $result->fetch_array()["password"])) {
-    $query = "SELECT * FROM user WHERE `username` = '{$username}'";
-    $result = $mysqli->query($query);
-    $_SESSION["user_id"] = $result->fetch_array()["id"];
-    $_SESSION["user"] = $username;
-    header("Location: ./dashboard.php");
-  }
-}
+if(isset($_SESSION["user_id"]))
+header("Location: ./dashboard.php");
 ?>
+
 <!DOCTYPE html>
-<html lang="it">
+<html lang="en">
 
 <head>
   <title>Welcome</title>
@@ -31,13 +13,21 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 </head>
 
 <body>
-  <form action="./" method="POST">
+  <form id="login_form">
     <input type="text" name="username">
     </input>
     <input type="text" name="password">
     </input>
     <input type="submit" value="SUBMIT">
   </form>
+  <form id="register_form">
+  </form>
+  <p id="error"></p>
+
+  <!-- jQuery -->
+  <script src="./js/lib/jquery-3.6.0.min.js"></script>
+  <!-- Auth -->
+  <script src="./js/auth.js"></script>
 </body>
 
 </html>

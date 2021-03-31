@@ -7,7 +7,7 @@ include("./game.php");
 
 if (
     isset($_POST["id"]) && isset($_POST["action"])
-    && isset($_SESSION["user"])
+    && isset($_SESSION["user_id"])
 ) {
     // Parametri sempre presenti
     $action = $_POST["action"];

@@ -2,11 +2,11 @@
 session_start();
 include("./php/mysql.php");
 print uniqid() . "<br>";
-if (!isset($_SESSION["user"])) {
+if (!isset($_SESSION["user_id"])) {
   header("Location: ./");
   exit;
 }
-print $_SESSION["user"];
+print $_SESSION["user_id"];
 ?>
 <!DOCTYPE html>
 <html lang="en">
