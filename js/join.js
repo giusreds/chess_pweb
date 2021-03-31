@@ -1,4 +1,35 @@
-var match_id = null;
+// URL of the current page, without GET parameters
+const location_no_param = location.protocol + '//' + location.host + location.pathname;
+// Eventual GET parameter to directly join a match 
+const join_param = new URLSearchParams(location.search).get("join");
+// Store the match in wich join
+var match_to_join = null;
+
+// Main
+$(document).ready(() => {
+    // Check if there is a join parameter
+    if (join_param) join_match(join_param);
+    console.log(location_no_param);
+
+    // Host match
+    $("#host_form").submit((e) => {
+        host_match(e);
+    });
+
+    $("#logout_form").submit((e) => {
+        e.preventDefault();
+        $.ajax({
+            type: "POST",
+            url: "./php/api_auth.php",
+            data: {
+                "action": "logout"
+            },
+            success: function (data) {
+                if (!data.error) location.replace("./");
+            }
+        });
+    });
+});
 
 $("#host").submit(function (e) {
     e.preventDefault();
@@ -8,27 +39,28 @@ $("#host").submit(function (e) {
         data: $(this).serialize(),
         success: function (data) {
             $("#match_id").text(data.id);
-            match_id = data.id;
-            $("#share_whatsapp").attr("href", WhatsAppLink(match_id));
+            match_to_join = data.id;
+            $("#share_whatsapp").attr("href", WhatsAppLink(match_to_join));
             setInterval(wait, 1000);
         }
     });
 });
 
-$("#join").submit(function (e) {
-    e.preventDefault();
+
+function host_match(event) {
+    event.preventDefault();
     $.ajax({
         type: "POST",
         url: "./php/api_join.php",
-        data: $(this).serialize(),
+        data: $(event.target).serialize(),
         success: function (data) {
-            match_id = data.id;
-            $("#match_id").text(match_id);
-            $("#share_whatsapp").attr("href", WhatsAppLink(match_id));
-            setInterval(wait, 1000);
+            $("#match_id").text(data.id);
+            match_to_join = data.id;
+            $("#share_whatsapp").attr("href", WhatsAppLink(match_to_join));
+            setInterval(wait(data.id), 1000);
         }
     });
-});
+}
 
 // Temp function
 function WhatsAppLink(match_id) {
@@ -39,7 +71,25 @@ function WhatsAppLink(match_id) {
     return base + encodeURI(message + match_id);
 }
 
-function wait() {
+
+function join_match(match_id) {
+    match_to_join = match_id;
+    $.ajax({
+        type: "POST",
+        url: "./php/api_join.php",
+        data: {
+            "action": "join",
+            "id": match_id
+        },
+        success: function (data) {
+            $("#match_id").text(match_id);
+            $("#share_whatsapp").attr("href", WhatsAppLink(match_id));
+            setInterval(wait(data.id), 1000);
+        }
+    });
+}
+
+function wait(match_id) {
     $("#wait").show();
     $.ajax({
         type: "POST",
@@ -57,7 +107,7 @@ function wait() {
             });
             if (data.status) {
                 setTimeout(function () {
-                    window.location.href = "./match.php?id=" + match_id;
+                    window.location.replace("./match.php?id=" + match_id);
                 }, 2000);
             }
         }
@@ -67,14 +117,14 @@ function wait() {
 
 $("#host_btn").on("click", function () {
     $("#join_dialog").show();
-    $("#join").hide();
-    $("#host").show();
+    $("#join_form").hide();
+    $("#host_form").show();
 });
 
 $("#join_btn").on("click", function () {
     $("#join_dialog").show();
-    $("#join").show();
-    $("#host").hide();
+    $("#join_form").show();
+    $("#host_form").hide();
 });
 
 $("#dialog_close").on("click", function () {

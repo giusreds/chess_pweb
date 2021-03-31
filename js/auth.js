@@ -1,8 +1,10 @@
+// Main
 $(document).ready(() => {
-    // Event listeners
+    // Login submit
     $("#login_form").submit((e) => {
         auth_request(e, "login");
     });
+    // Register submit
     $("#register_form").submit((e) => {
         auth_request(e, "register");
     });
@@ -10,16 +12,15 @@ $(document).ready(() => {
 
 function auth_request(event, action) {
     event.preventDefault();
-    formData = $(event.target).serialize() + "&action=" + action;
+    // Get the form data and add the action
+    form_data = $(event.target).serialize() + "&action=" + action;
     $.ajax({
         type: "POST",
         url: "./php/api_auth.php",
-        data: formData,
+        data: form_data,
         success: function (data) {
-            if (!data.error)
-                auth_success(action);
-            else
-                $("#error").text(data.error_msg);
+            if (!data.error) auth_success(action);
+            else auth_failure(data.error_msg);
         }
     });
 }
@@ -27,9 +28,13 @@ function auth_request(event, action) {
 function auth_success(action) {
     switch (action) {
         case "login":
-            window.location.href = "./";
+            location.reload();
             break;
         case "register":
 
     }
+}
+
+function auth_failure(error_msg = "") {
+    $("#auth_error").text(error_msg);
 }

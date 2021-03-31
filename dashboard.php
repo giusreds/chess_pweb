@@ -1,12 +1,10 @@
 <?php
 session_start();
 include("./php/mysql.php");
-print uniqid() . "<br>";
 if (!isset($_SESSION["user_id"])) {
   header("Location: ./");
   exit;
 }
-print $_SESSION["user_id"];
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -21,6 +19,9 @@ print $_SESSION["user_id"];
 <body>
   <header>
     <img src="./img/logo.png" id="logo">
+    <form id="logout_form">
+      <input type="submit" value="LOGOUT">
+    </form>
   </header>
   <main>
     <button class="menu_btn" id="host_btn">Host new match</button>
@@ -61,7 +62,7 @@ print $_SESSION["user_id"];
   <div id="join_dialog" class="dialog">
     <div class="dialog_content">
       <span id="dialog_close">CLOSE</span>
-      <form id="host">
+      <form id="host_form">
         <h2>Host</h2>
         <input type="hidden" name="action" value="host">
         <input type="radio" name="num_players" value="2" required>
@@ -76,12 +77,11 @@ print $_SESSION["user_id"];
           <span class="slider round"></span>
         </label>
 
-        <button id="host_submit">HOST</button>
+        <input type="submit" value="HOST">
       </form>
-      <form id="join">
-        <input type="hidden" name="action" value="join">
-        <input type="text" name="id">
-        <button id="join_submit">JOIN</button>
+      <form id="join_form" method="GET">
+        <input type="text" name="join">
+        <input type="submit" value="JOIN">
       </form>
       <div id="available"></div>
     </div>

@@ -3,14 +3,16 @@ session_start();
 header("Content-type: application/json");
 include("./mysql.php");
 
+// Regular expression for the username
 $username_pattern = "(?:^|[^\w])(?:@)([a-z0-9_](?:(?:[a-z0-9_]|(?:\.(?!\.))){0,28}(?:[a-z0-9_]))?)";
+// Valid avatars
 $avatars = range(1, 4);
 
 
-
+// Main
 // If the request hasn't an action
 if (!isset($_POST["action"]))
-    exit;
+    return_failure("Invalid action");
 $action = $_POST["action"];
 switch ($action) {
     case "login":
@@ -21,8 +23,15 @@ switch ($action) {
     case "register":
         register($_POST["username"], $_POST["password"], $_POST["avatar"]);
         break;
+    case "logout":
+        // Remove all session variables and destroy the session
+        session_unset();
+        session_destroy();
+        // Tell the client it's all okay
+        return_success();
+        break;
     case "validate":
-        usernameValidation($_POST["username"]);
+        username_validation($_POST["username"]);
         break;
 }
 
@@ -44,7 +53,6 @@ function return_failure($message = null)
     echo json_encode($resp);
     exit;
 }
-
 
 function login($username, $password)
 {
@@ -77,7 +85,7 @@ function login($username, $password)
 }
 
 // Checks if an username already exists
-function isUsernameTaken($username)
+function is_username_taken($username)
 {
     global $mysqli;
     $query = $mysqli->prepare(
@@ -90,8 +98,8 @@ function isUsernameTaken($username)
     $result = $query->get_result();
     $row = $result->fetch_array();
     if ($row["found"])
-        return 1;
-    return 0;
+        return true;
+    return false;
 }
 
 
@@ -106,23 +114,26 @@ function register($username, $password, $avatar)
         !in_array($avatar, $avatars)
     )
         return_failure();
-    if (isUsernameTaken($username))
+    $username = strtolower($username);
+    if (is_username_taken($username))
         return_failure("Invalid username");
+    // Hash the password with Bcrypt algorithm
+    $password_hash = password_hash($password, PASSWORD_BCRYPT);
     $query = $mysqli->prepare(
         "INSERT INTO `user`
         (`username`, `password`, `avatar`)
         VALUES (?, ?, ?)"
     );
-    $query->bind_param("ssi", $username, $password, $avatar);
+    $query->bind_param("ssi", $username, $password_hash, $avatar);
     $query->execute();
     return_success();
 }
 
 // Checks if the username is valid
-function usernameValidation($username)
+function username_validation($username)
 {
     global $username_pattern;
-    if (isUsernameTaken($username))
+    if (is_username_taken($username))
         return_failure("The username is already taken");
     if (!preg_match($username_pattern, $username))
         return_failure("The username doesn't match the pattern");
