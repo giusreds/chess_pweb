@@ -5,6 +5,9 @@ const join_param = new URLSearchParams(location.search).get("join");
 // Store the match in wich join
 var match_to_join = null;
 
+const matches_refresh_rate = 5000;
+var refresh_matches = null;
+
 // Main
 $(document).ready(() => {
     // Check if there is a join parameter
@@ -125,8 +128,108 @@ $("#join_btn").on("click", function () {
     $("#join_dialog").show();
     $("#join_form").show();
     $("#host_form").hide();
+    continuous_get_matches();
 });
 
 $("#dialog_close").on("click", function () {
     $("#join_dialog").hide();
+});
+
+
+
+function add_match(match) {
+    var name = "match_" + match.id;
+    if (!$("#" + name).length) {
+        var tmp = $("<div>").addClass("match_available")
+            .attr({
+                "id": name
+            });
+        $("#available_matches_list").append(tmp);
+    }
+    var to_append = $().add(
+        $("<h3>").text(match.host)
+    ).add(
+        $("<p>").text(match.actual + " / " + match.total)
+    ).add(
+        $("<a>", {
+            "href": "./?join=" + match.id,
+            "target": "_top"
+        }).text("JOIN")
+    );
+    $("#" + name).empty().append(to_append);
+}
+
+
+function continuous_get_matches() {
+    get_matches();
+    refresh_matches = setInterval(() => {
+        get_matches();
+    }, matches_refresh_rate);
+}
+
+function get_matches() {
+    $.ajax({
+        type: "POST",
+        url: "./php/api_join.php",
+        data: {
+            "action": "get"
+        },
+        success: (data) => {
+            console.log(data);
+            data.forEach(match => {
+                add_match(match);
+            });
+        }
+    });
+    $(".match_available").each(() => {
+        var match_id = $(this).id.substring(6, $(this).id.length);
+        if (!data.some(el => el.id == match_id))
+            $(this).remove();
+    });
+}
+
+function update_available_matches(data) {
+    ;
+}
+
+
+$("body").addClass("visible");
+
+
+
+$(window).on("scroll", () => {
+    var value = window.scrollY;
+    $("#mountain").css("top", 250 + value * 0.5 + "px");
+    $("#ground").css("top", 350 + value * 0.15 + "px");
+    $("#logo_p").css("top", value + "px");
+    $("#moon").css({
+        "top": (200 + value * 0.6) + "px",
+        "right": (200 + value * 0.9) + "px"
+    });
+});
+
+
+
+$("#moon").on("click", () => {/*
+    window.scrollTo({
+        top: $(".menu").position().top,
+        left: 0,
+        behavior: 'smooth'
+      });
+      */
+    $('html, body').animate({
+        scrollTop: $(".menu").offset().top
+    }, 1200);
+});
+
+$("#scroll-top").on("click", () => {
+    $('html, body').stop();
+    $('html, body').animate({
+        scrollTop: $(".parallax").offset().top
+    }, 1200);/*
+    window.scrollTo({
+        top: $(".parallax").position().top,
+        left: 0,
+        behavior: 'smooth'
+      });*/
 });

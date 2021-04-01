@@ -2,7 +2,6 @@
 session_start();
 header("Content-type: application/json");
 include_once("./mysql.php");
-include("./rules.php");
 include_once("./game.php");
 
 if (

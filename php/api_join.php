@@ -245,8 +245,8 @@ function get_users($match_id)
 function get_available()
 {
     global $mysqli;
-    delete_host();
-    delete_player();
+    //delete_host();
+    //delete_player();
     $user_id = $_SESSION["user_id"];
     $matches = array();
     include("./mysql.php");

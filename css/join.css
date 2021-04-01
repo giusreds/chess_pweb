@@ -1,3 +1,7 @@
+
+
+
+
 #join, #host, #wait, #available {
     display: none;
 }
@@ -97,6 +101,8 @@ input:checked+.slider:before {
     src: url('../res/font/PressStart2P-Regular.ttf');
     display: swap;
 }
+
+/*
 
 body {
 

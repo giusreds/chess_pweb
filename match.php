@@ -42,8 +42,8 @@ if (
     <!-- Chess Board -->
     <div class="game">
         <div class="captured" id="captured_opp"></div>
-        <div id="campo">
-            <table class="scacchiera">
+        <div id="board">
+            <table class="chessboard">
                 <?php
                 // Disegno la scacchiera
                 echo "<tbody>";
@@ -61,35 +61,37 @@ if (
         </div>
         <div class="captured" id="captured_you"></div>
     </div>
+    <?php
+    // Include the form for pawn promotion
+    if ($mode) : ?>
+        <!-- Pawn promotion -->
+        <div id="promotion">
+            <form id="promotion_form">
+                <?php
 
-    <!-- Pawn promotion -->
-    <div id="promotion">
-        <form id="promotion_form">
-            <?php
-
-            function pieceName($piece)
-            {
-                global $player_id;
-                $color = ($player_id) ? "b" : "w";
-                $piece_ = strtoupper(substr($piece, 0, 1));
-                if ($piece_ == "K") $piece_ = "N";
-                return $color . $piece_;
-            }
-            // Set the radio input fields
-            $pieces = array("queen", "knight", "rook", "bishop");
-            foreach ($pieces as $piece) {
-                echo "<label>";
-                echo '<input type="radio" name="promotion" value="' . $piece . '">';
-                echo '<img src="./img/pieces/' . pieceName($piece) . '.png" alt="' . $piece . '">';
-                echo "</label>";
-            }
-            ?>
-        </form>
-    </div>
+                function pieceName($piece)
+                {
+                    global $player_id;
+                    $color = ($player_id) ? "b" : "w";
+                    $piece_ = strtoupper(substr($piece, 0, 1));
+                    if ($piece_ == "K") $piece_ = "N";
+                    return $color . $piece_;
+                }
+                // Set the radio input fields
+                $pieces = array("queen", "knight", "rook", "bishop");
+                foreach ($pieces as $piece) {
+                    echo "<label>";
+                    echo '<input type="radio" name="promotion" value="' . $piece . '">';
+                    echo '<img src="./img/pieces/' . pieceName($piece) . '.png" alt="' . $piece . '">';
+                    echo "</label>";
+                }
+                ?>
+            </form>
+        </div>
 
     <?php
     // Include buttons for replay
-    if (!$mode) : ?>
+    else : ?>
         <div class="controls">
             <button id="back-btn">BACK</button>
             <button id="play-btn">PLAY</button>

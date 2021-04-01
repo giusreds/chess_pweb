@@ -8,6 +8,9 @@ $(document).ready(() => {
     $("#register_form").submit((e) => {
         auth_request(e, "register");
     });
+
+    // Body fade in transition
+    $("body").addClass("visible");
 });
 
 function auth_request(event, action) {

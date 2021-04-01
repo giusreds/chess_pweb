@@ -1,33 +1,33 @@
-/* Scacchiera */
+/* Chessboard */
 
-.scacchiera {
+.chessboard {
   background-color: white;
 }
 
-.scacchiera,
-.scacchiera td {
+.chessboard,
+.chessboard td {
   border-collapse: collapse;
   border: 1px solid black;
 }
 
-.scacchiera tr {
+.chessboard tr {
   height: 60px;
 }
 
-.scacchiera td {
+.chessboard td {
   width: 60px;
   transition: all 0.1s linear;
 }
 
-.scacchiera tr:nth-child(even) > td:nth-child(odd) {
+.chessboard tr:nth-child(even) > td:nth-child(odd) {
   background: #cccccc;
 }
 
-.scacchiera tr:nth-child(odd) > td:nth-child(even) {
+.chessboard tr:nth-child(odd) > td:nth-child(even) {
   background: #cccccc;
 }
 
-.pedina {
+.piece {
   display: block;
   position: absolute;
   width: 61px;
@@ -35,7 +35,9 @@
   color: rgba(0, 0, 0, 0);
   z-index: 1;
   pointer-events: none;
-  transition: all 1s ease-in-out;
+  transition-property: opacity, left, top;
+  transition-duration: 0.4s, 0.8s, 1s;
+  transition-timing-function: ease-in-out;
 }
 
 .clickable,
@@ -65,7 +67,7 @@
   width: 480px;
 }
 
-#campo {
+#board {
   position: relative;
   width: 480px;
   height: 480px;
@@ -81,7 +83,7 @@
   float: left;
 }
 
-.captured .pedina {
+.captured .piece {
   position: relative;
   float: left;
   width: 30px;

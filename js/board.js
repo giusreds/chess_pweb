@@ -8,7 +8,7 @@ function updateChessboard(matchStatus) {
         for (var j = 0; j < 8; j++) {
             // If cell is empty, jump next
             if (!chessboard[i][j]) continue;
-            addPiece("campo", chessboard[i][j]);
+            addPiece("board", chessboard[i][j]);
             // Set the position of the current piece
             $("#" + chessboard[i][j].name).css({
                 "top": 60 * i + "px",
@@ -37,7 +37,7 @@ function updateChessboard(matchStatus) {
 function addPiece(father, piece, prefix = "") {
     // If the piece doesn't already exist
     if (!$("#" + prefix + piece.name).length) {
-        var tmp = $("<img>").addClass("pedina")
+        var tmp = $("<img>").addClass("piece")
             .attr({
                 "id": prefix + piece.name,
                 "src": "./img/pieces/" + piece.icon + ".png",
@@ -45,22 +45,19 @@ function addPiece(father, piece, prefix = "") {
             }).css("opacity", 0);
         $("#" + father).append(tmp);
     }
-    // I reset anyway the "src" attribute because
+    // I reset anyway the "src" attribute becsause
     // pieces icons can change during the match
     // (pawn promotion)
-    current_piece = $("#" + prefix + piece.name);
-    current_piece.animate({
-        "opacity": 1
-    }, 600);
-    current_piece.attr("src", "./img/pieces/" + piece.icon + ".png");
+    $.when().then(() => {
+        $("#" + prefix + piece.name).attr("src", "./img/pieces/" + piece.icon + ".png").css("opacity", 1);
+    });
+
 }
 
 
 // Removes an element with a fadeOut animation
-function fadeOut(element, duration = 1000) {
-    element.animate({
-        opacity: 0,
-    }, duration, function () {
+function fadeOut(element) {
+    element.css("opacity", 0).on("transitionend", function () {
         this.remove();
     });
 }
