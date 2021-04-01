@@ -99,8 +99,7 @@ input:checked+.slider:before {
 }
 
 body {
-    background-color: #AA0000;
-    background-image: url(../img/background.svg);
+
     font-family: "Pixeled", Fallback, sans-serif;
 }
 

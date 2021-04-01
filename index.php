@@ -10,6 +10,7 @@ $mode = (isset($_SESSION["user_id"])) ? 1 : 0;
 <head>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta charset="UTF-8">
+  <link rel="stylesheet" href="./css/core.css">
   <?php
   // DASHBOARD
   if ($mode) : ?>
@@ -22,7 +23,7 @@ $mode = (isset($_SESSION["user_id"])) ? 1 : 0;
   <?php endif; ?>
 </head>
 
-<body>
+<body class="loopscroll">
   <?php
   // DASHBOARD
   if ($mode) : ?>

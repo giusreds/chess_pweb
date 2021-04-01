@@ -25,6 +25,7 @@ function auth_request(event, action) {
     });
 }
 
+// If auth operation succeeded
 function auth_success(action) {
     switch (action) {
         case "login":
@@ -34,7 +35,7 @@ function auth_success(action) {
 
     }
 }
-
+// If auth operation failed or reset error_msg
 function auth_failure(error_msg = "") {
     $("#auth_error").text(error_msg);
 }
