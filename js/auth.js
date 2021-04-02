@@ -8,9 +8,6 @@ $(document).ready(() => {
     $("#register_form").submit((e) => {
         auth_request(e, "register");
     });
-
-    // Body fade in transition
-    $("body").addClass("visible");
 });
 
 function auth_request(event, action) {
@@ -24,7 +21,7 @@ function auth_request(event, action) {
         success: function (data) {
             if (!data.error) auth_success(action);
             else auth_failure(data.error_msg);
-        }
+        },
     });
 }
 
@@ -35,7 +32,6 @@ function auth_success(action) {
             location.reload();
             break;
         case "register":
-
     }
 }
 // If auth operation failed or reset error_msg

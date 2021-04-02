@@ -1,142 +1,121 @@
+:root {
+    /* Colors for the UI */
+    --primary-accent: #f91d17;
+    --secondary-accent: #af211e;
+}
+
 html {
-  width: 100%;
-  background-color: #000000;
-  /*image-rendering: pixelated;*/
+    width: 100%;
+    /* For mobile compatibility */
+    height: -webkit-fill-available;
+    background-color: black;
 }
 
 body {
-  min-height: 100vh;
-  min-height: -webkit-fill-available;
-}
-html {
-  height: -webkit-fill-available;
-}
-
-body {
-  overflow: hidden;
-  width: 100%;
-  margin: 0;
-  opacity: 0;
-  transition: opacity 0.4s linear;
-  background-color: #f91d17;
-  /*
-  background-color: #aa0000;
-  background-image: url("../img/background/bg.png");
-  background-position: center;
-  background-attachment: fixed;
-  background-repeat: no-repeat;
-  background-size: cover;
-  */
+    width: 100%;
+    min-height: 100vh;
+    min-height: -webkit-fill-available;
+    margin: 0;
+    background-color: black;
+    /* Fade in effect */
+    animation-name: fade_in;
+    animation-duration: 0.4s;
+    animation-timing-function: ease-out;
 }
 
-body.visible {
-  opacity: 1;
-}
-
-.mountain_top,
-.mountain_bottom {
-  display: block;
-  position: absolute;
-  width: 100%;
-  height: 40%;
-  background-repeat: no-repeat;
-  background-size: 100% auto;
-}
-
-.mountain_top {
-  background-image: url("../img/mountain_top.png");
-  z-index: 20;
-  bottom: 0;
-}
-
-.mountain_bottom {
-  background-image: url("../img/mountain_bottom.png");
-  z-index: 19;
-  bottom: 2200px;
-}
-
-.loopscroll {
-  height: 100%;
-  width: 100%;
-  overflow: hidden;
-  background-image: url("../img/background.svg");
-  background-repeat: repeat-x;
-  background-position: 0 0;
-  background-size: auto 100%;
-  animation-name: backgroundloop;
-  animation-iteration-count: infinite;
-  animation-duration: 10s;
-  animation-direction: alternate;
-  animation-timing-function: ease-in-out;
-}
-
-@keyframes backgroundloop {
-  0% {
-    background-position: 0 0;
-  }
-  100% {
-    background-position: 60% 0;
-  }
+@keyframes fade_in {
+    0% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
 }
 
 header {
-  position: fixed;
-  width: 100%;
-  /*height: 100px;*/
-  height: 0;
-  background-color: white;
-  border-bottom: 1px solid;
-  box-shadow: 5px 10px 8px #888888;
+    position: fixed;
+    width: 100%;
+    /*height: 100px;*/
+    height: 0;
+    background-color: white;
+    border-bottom: 1px solid;
+    box-shadow: 5px 10px 8px #888888;
 }
 
 .menu {
-  overflow: scroll;
-  position: relative;
-  background-color: white;
-  width: auto;
-  max-width: 1140px;
-  margin: 0 auto;
+    overflow: auto;
+    position: relative;
+    background-color: white;
+    width: auto;
+    max-width: 1140px;
+    margin: 0 auto;
 }
 
-/*Parallax*/
+/* Parallax */
 
 .parallax {
-  position: relative;
-  width: 100%;
-  height: 100vh;
-  overflow: hidden;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+    position: relative;
+    width: 100%;
+    height: 100vh;
+    overflow: hidden;
+    display: block;
+    justify-content: center;
+    align-items: center;
+    background-color: #f91d17;
+    transition: height 1s ease-in-out;
 }
-.parallax img {
-  position: absolute;
-  top: 250px;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  pointer-events: none;
+.parallax.collapsed {
+    height: 0;
+}
+.parallax div {
+    position: absolute;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    object-fit: cover;
+    border-image-repeat: repeat-x;
+    background-size: auto 100%;
+}
+
+#mountain {
+    mask-image: url("../img/parallax/mountain.svg");
+    position: relative;
+    z-index: 0;
+    height: 80vh;
+    top: 50%;
+    transform: translateY(-30%);
+    background-color: #af211e;
 }
 
 #moon {
-  position: absolute;
-  top: 200px;
-  right: 200px;
-  width: 160px;
-  height: 160px;
-  border-radius: 50%;
-  background-color: white;
+    position: absolute;
+    top: 200px;
+    right: 200px;
+    width: 160px;
+    height: 160px;
+    border-radius: 50%;
+    background-color: white;
 }
 
 #ground {
-  top: 350px;
-  z-index: 2;
+    background-image: url("../img/parallax/ground.svg");
+    bottom: 0;
+    height: 30vh;
+    z-index: 2;
 }
 
 #logo_p {
-  position: relative;
-  color: white;
-  font-size: 10em;
-  z-index: 1;
+    width: 100%;
+    text-align: center;
+    top: 0;
+    position: absolute;
+    color: white;
+    font-size: 10em;
+    z-index: 1;
+}
+
+.menu {
+    background-color: black;
+    color: white;
 }
