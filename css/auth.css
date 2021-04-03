@@ -187,7 +187,7 @@ input:focus,
 
 /* Ground */
 #ground {
-    background-image: url("../img/parallax/ground.svg");
+    background-image: url("../img/ground.svg");
     bottom: -1px;
     height: 26vh;
     z-index: 2;

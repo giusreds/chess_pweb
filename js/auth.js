@@ -70,19 +70,10 @@ function auth_success(action) {
             break;
     }
 }
+
 // If auth operation failed or reset error_msg
 function auth_failure(action, error_msg = "") {
     $("#" + action + "_error").text(error_msg);
-}
-
-// Move around from login to register and the opposite
-function goto_auth(to_show) {
-    if (to_show == "login") var to_hide = "register";
-    else var to_hide = "login";
-    $(".container." + to_show).removeClass("hidden");
-    $(".container." + to_hide).addClass("hidden");
-    // Resets the form
-    $("#" + to_show + "_form").trigger("reset");
 }
 
 // Checks if the password and password-confirm fields matches
@@ -110,4 +101,14 @@ function validate_username() {
             $("#username_reg").get(0).setCustomValidity(message);
         },
     });
+}
+
+// Move around from login to register and the opposite
+function goto_auth(to_show) {
+    if (to_show == "login") var to_hide = "register";
+    else var to_hide = "login";
+    $(".container." + to_show).removeClass("hidden");
+    $(".container." + to_hide).addClass("hidden");
+    // Resets the form
+    $("#" + to_show + "_form").trigger("reset");
 }

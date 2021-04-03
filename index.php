@@ -8,14 +8,15 @@ $mode = (isset($_SESSION["user_id"])) ? 1 : 0;
 <html lang="en">
 
 <head>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, 
+    maximum-scale=1.0, user-scalable=0">
     <meta charset="UTF-8">
     <link rel="stylesheet" href="./css/core.css">
     <?php
     // DASHBOARD
     if ($mode) : ?>
         <link rel="stylesheet" href="./css/dashboard.css">
-        <title>Welcome</title>
+        <title>Welcome, <?php echo $_SESSION["username"]; ?>!</title>
     <?php
     // LOGIN SCREEN
     else : ?>
@@ -166,7 +167,7 @@ $mode = (isset($_SESSION["user_id"])) ? 1 : 0;
     // DASHBOARD
     if ($mode) : ?>
         <!-- Join -->
-        <script src="./js/join.js"></script>
+        <script src="./js/dashboard.js"></script>
     <?php
     // LOGIN SCREEN
     else : ?>

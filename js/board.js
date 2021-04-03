@@ -11,8 +11,8 @@ function updateChessboard(matchStatus) {
             addPiece("board", chessboard[i][j]);
             // Set the position of the current piece
             $("#" + chessboard[i][j].name).css({
-                "top": 60 * i + "px",
-                "left": 60 * j + "px"
+                "top": "calc(var(--cell-size) * " + i + ")",
+                "left": "calc(var(--cell-size) * " + j + ")"
             });
         }
     // Captured pieces
@@ -70,4 +70,15 @@ function inCheck(inCheck) {
     inCheck.forEach(element => {
         $("#" + element).addClass("incheck");
     });
+}
+
+$(window).on("resize", set_cell_size);
+$(document).ready(set_cell_size);
+
+
+function set_cell_size() {
+    var width = $(window).width();
+    var cell_size = (width > 480) ? 60 : width/8;
+    $(":root").css("--cell-size", cell_size + "px");
+    console.log(width);
 }
