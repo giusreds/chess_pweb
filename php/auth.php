@@ -1,7 +1,7 @@
 <?php
 
 // Regular expression for the username
-$username_pattern = "(?:^|[^\w])(?:@)([a-z0-9_](?:(?:[a-z0-9_]|(?:\.(?!\.))){0,28}(?:[a-z0-9_]))?)";
+$username_pattern = "/^(?=[a-z]{2})(?=.{4,26})(?=[^.]*\.?[^.]*$)(?=[^_]*_?[^_]*$)[\w.]+$/iD";
 // Valid avatars
 $avatars = range(1, 4);
 
@@ -86,7 +86,7 @@ function register($username, $password, $avatar)
         return_failure();
     $username = strtolower($username);
     if (is_username_taken($username))
-        return_failure("Invalid username");
+        return_failure("Check your datas, please.");
     // Hash the password with Bcrypt algorithm
     $password_hash = password_hash($password, PASSWORD_BCRYPT);
     $query = $mysqli->prepare(
@@ -104,8 +104,8 @@ function username_validation($username)
 {
     global $username_pattern;
     if (is_username_taken($username))
-        return_failure("The username is already taken");
+        return_failure("The username is already taken.");
     if (!preg_match($username_pattern, $username))
-        return_failure("The username doesn't match the pattern");
+        return_failure("The username doesn't match the pattern.");
     return_success();
 }

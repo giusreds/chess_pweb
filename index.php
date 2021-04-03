@@ -106,72 +106,73 @@ $mode = (isset($_SESSION["user_id"])) ? 1 : 0;
                 <a id="share_whatsapp" href="#" target="_blank">Share with WhatsApp</a>
                 <p id="match_id"></p>
             </div>
-        <?php
+        </main>
+    <?php
     // LOGIN SCREEN
     else : ?>
-            <div class="parallax full_screen">
-                <div id="mountain"></div>
-                <div id="ground"></div>
-                <h2 id="logo_p">Strange Chess</h2>
-            </div>
-            <div id="auth_form" class="full_screen">
-                <section class="container login">
-                    <h2>Login</h2>
-                    <span id="goto_register">
-                        I don't have an account yet.
-                        <img src="./img/fontawesome/chevron-right.svg" alt="forward">
-                    </span>
-                    <form id="login_form">
-                        <input type="text" name="username" placeholder="Username...">
-                        <input type="password" name="password" placeholder="Password...">
-                        <button type="submit">LOGIN</button>
-                        <p id="login_error"></p>
-                    </form>
-                </section>
-                <section class="container register hidden">
-                    <h2>Register now</h2>
-                    <span id="goto_login">
-                        <img src="./img/fontawesome/chevron-left.svg" alt="back">
-                        I already have an account.
-                    </span>
-                    <form id="register_form">
-                        <input type="text" name="username" placeholder="Username..." required>
-                        <input type="password" name="password" id="psw" placeholder="Password..." required>
-                        <input type="password" id="psw-confirm" placeholder="Repeat password..." required>
-                        <div>
-                            <p>Select an avatar</p>
-                            <?php
-                            include("./php/auth.php");
-                            foreach ($avatars as $avatar) {
-                                echo '<label class="avatar_label">';
-                                echo '<input class="avatar_select" type="radio" name="avatar" value="' . $avatar . '" required>';
-                                echo '<img src="./img/avatars/' . $avatar . '.svg" alt="' . $avatar . '">';
-                                echo "</label>";
-                            }
-                            ?>
-                        </div>
-                        <button type="submit">REGISTER</button>
-                        <p id="register_error"></p>
-                    </form>
-                </section>
-            </div>
-            <div id="register_success"></div>
-            </div>
-        <?php endif; ?>
+        <div id="parallax" class="full_screen">
+            <div id="skyline"></div>
+            <div id="ground"></div>
+            <h2 id="logo">Strange<br>Chess</h2>
+        </div>
+        <div id="auth_form" class="full_screen">
+            <section class="container login">
+                <h2>Login</h2>
+                <span id="goto_register">
+                    I don't have an account yet.
+                    <img src="./img/fontawesome/chevron-right.svg" alt="forward">
+                </span>
+                <form id="login_form">
+                    <input type="text" name="username" placeholder="Username..." autocomplete="username" required>
+                    <input type="password" name="password" placeholder="Password..." autocomplete="current-password" required>
+                    <button type="submit">LOGIN</button>
+                    <p id="login_error"></p>
+                </form>
+            </section>
+            <section class="container register hidden">
+                <h2>Register now</h2>
+                <span id="goto_login">
+                    <img src="./img/fontawesome/chevron-left.svg" alt="back">
+                    I already have an account.
+                </span>
+                <form id="register_form">
+                    <input type="text" id="username_reg" name="username" placeholder="Username..." autocomplete="username" required>
+                    <input type="password" name="password" id="psw" placeholder="Password..." autocomplete="new-password" required>
+                    <input type="password" id="psw_confirm" placeholder="Repeat password..." required>
+                    <div>
+                        <p>Select an avatar</p>
+                        <?php
+                        include("./php/auth.php");
+                        foreach ($avatars as $avatar) {
+                            echo '<label class="avatar_label">';
+                            echo '<input class="avatar_select" type="radio" name="avatar" value="' . $avatar . '" required>';
+                            echo '<img src="./img/avatars/' . $avatar . '.svg" alt="' . $avatar . '">';
+                            echo "</label>";
+                        }
+                        ?>
+                    </div>
+                    <button type="submit">REGISTER</button>
+                    <p id="register_error"></p>
+                </form>
+            </section>
+        </div>
+        <div id="register_success"></div>
+        </div>
+    <?php endif; ?>
 
-        <!-- jQuery -->
-        <script src="./js/lib/jquery-3.6.0.min.js"></script>
-        <?php
-        // DASHBOARD
-        if ($mode) : ?>
-            <!-- Join -->
-            <script src="./js/join.js"></script>
-        <?php
-        // LOGIN SCREEN
-        else : ?>
-            <!-- Auth -->
-            <script src="./js/auth.js"></script>
-        <?php endif; ?>
+    <!-- jQuery -->
+    <script src="./js/lib/jquery-3.6.0.min.js"></script>
+    <?php
+    // DASHBOARD
+    if ($mode) : ?>
+        <!-- Join -->
+        <script src="./js/join.js"></script>
+    <?php
+    // LOGIN SCREEN
+    else : ?>
+        <!-- Auth -->
+        <script src="./js/auth.js"></script>
+    <?php endif; ?>
 </body>
 
 </html>

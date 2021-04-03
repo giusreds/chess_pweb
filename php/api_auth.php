@@ -13,7 +13,7 @@ switch ($action) {
     case "login":
         if (login($_POST["username"], $_POST["password"]))
             return_success();
-        return_failure("Check your credentials");
+        return_failure("Wrong username or password.");
         break;
     case "register":
         register($_POST["username"], $_POST["password"], $_POST["avatar"]);

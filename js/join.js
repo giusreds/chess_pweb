@@ -219,21 +219,21 @@ $("#logo_p").on("click", () => {
     $('html, body').animate({
         scrollTop: $(".menu").offset().top
     }, 1200);*/
-    $(".parallax").addClass("collapsed");
+    $("#parallax").addClass("collapsed");
 });
 
 $("#scroll-top").on("click", () => {
     $("html, body").stop();
     $("html, body").animate(
         {
-            scrollTop: $(".parallax").offset().top,
+            scrollTop: $("#parallax").offset().top,
         },
         1200
     ); /*
     window.scrollTo({
-        top: $(".parallax").position().top,
+        top: $("#parallax").position().top,
         left: 0,
         behavior: 'smooth'
       });*/
-    $(".parallax").removeClass("collapsed");
+    $("#parallax").removeClass("collapsed");
 });

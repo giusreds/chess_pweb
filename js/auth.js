@@ -9,6 +9,11 @@ $(document).ready(() => {
         auth_request(e, "register");
     });
 
+    // Register form fields validation
+    $("#username_reg").on("change", validate_username);
+    $("#psw_confirm").on("keyup", validate_password);
+    $("#psw").on("change", validate_password);
+
     // Move between login and register forms
     $("#goto_register").on("click", () => {
         goto_auth("register");
@@ -16,10 +21,30 @@ $(document).ready(() => {
     $("#goto_login").on("click", () => {
         goto_auth("login");
     });
+
+    // Parallax scroll effect
+
+    // Scroll down to login
+    $("#logo").on("click", () => {
+        $("#parallax").addClass("collapsing collapsed");
+    });
+    // Scroll top to parallax
+    $("#login_error").on("click", () => {
+        $("#parallax").addClass("collapsing").removeClass("collapsed");
+    });
+    // Remove the transition property after transition
+    $("#parallax").on("transitionend", () => {
+        $("#parallax").removeClass("collapsing");
+    });
 });
 
+// Calls the API to login or register and retrieves the response
 function auth_request(event, action) {
     event.preventDefault();
+    if (action == "register") {
+        validate_password();
+        validate_username();
+    }
     // Get the form data and add the action
     form_data = $(event.target).serialize() + "&action=" + action;
     $.ajax({
@@ -41,6 +66,8 @@ function auth_success(action) {
             break;
         case "register":
             alert("Registration success!");
+            goto_auth("login");
+            break;
     }
 }
 // If auth operation failed or reset error_msg
@@ -48,6 +75,7 @@ function auth_failure(action, error_msg = "") {
     $("#" + action + "_error").text(error_msg);
 }
 
+// Move around from login to register and the opposite
 function goto_auth(to_show) {
     if (to_show == "login") var to_hide = "register";
     else var to_hide = "login";
@@ -55,4 +83,31 @@ function goto_auth(to_show) {
     $(".container." + to_hide).addClass("hidden");
     // Resets the form
     $("#" + to_show + "_form").trigger("reset");
+}
+
+// Checks if the password and password-confirm fields matches
+function validate_password() {
+    if ($("#psw").val() != $("#psw_confirm").val())
+        var message = "The two password don't match.";
+    else var message = "";
+    $("#psw_confirm").get(0).setCustomValidity(message);
+}
+
+// Calls the API to check if the username matches the pattern
+// and if it is unique
+function validate_username() {
+    var body = {
+        action: "validate",
+        username: $("#username_reg").val(),
+    };
+    $.ajax({
+        type: "POST",
+        url: "./php/api_auth.php",
+        data: body,
+        success: function (data) {
+            if (!data.error) var message = "";
+            else var message = data.error_msg;
+            $("#username_reg").get(0).setCustomValidity(message);
+        },
+    });
 }

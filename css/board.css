@@ -1,13 +1,13 @@
 /* Chessboard */
 
 .chessboard {
-  background-color: white;
+  background-color: var(--primary-accent);
 }
 
 .chessboard,
 .chessboard td {
   border-collapse: collapse;
-  border: 1px solid black;
+  border: 0px solid black;
 }
 
 .chessboard tr {
@@ -20,11 +20,11 @@
 }
 
 .chessboard tr:nth-child(even) > td:nth-child(odd) {
-  background: #cccccc;
+  background: var(--secondary-accent);
 }
 
 .chessboard tr:nth-child(odd) > td:nth-child(even) {
-  background: #cccccc;
+  background: var(--secondary-accent);
 }
 
 .piece {
@@ -144,7 +144,5 @@ body {
 }
 
 body {
-  background-color: #aa0000;
-  background-image: url(../img/background.svg);
-  font-family: "MedievalSharp";
+  background-color: white;
 }
