@@ -14,11 +14,12 @@ $mode = (isset($_SESSION["user_id"])) ? 1 : 0;
     <?php
     // DASHBOARD
     if ($mode) : ?>
+        <link rel="stylesheet" href="./css/dashboard.css">
         <title>Welcome</title>
-        <link rel="stylesheet" href="./css/join.css">
     <?php
     // LOGIN SCREEN
     else : ?>
+        <link rel="stylesheet" href="./css/auth.css">
         <title>Login</title>
     <?php endif; ?>
 </head>
@@ -34,11 +35,6 @@ $mode = (isset($_SESSION["user_id"])) ? 1 : 0;
             </form>
         </header>
         <main>
-            <section class="parallax">
-                <div id="mountain"></div>
-                <div id="ground"></div>
-                <h2 id="logo_p">Strange Chess</h2>
-            </section>
             <section class="menu">
                 <button id="scroll-top">TOP</button>
                 <button class="menu_btn" id="host_btn">Host new match</button>
@@ -113,23 +109,54 @@ $mode = (isset($_SESSION["user_id"])) ? 1 : 0;
         <?php
     // LOGIN SCREEN
     else : ?>
-            <main>
-                <div id="auth_form">
+            <div class="parallax full_screen">
+                <div id="mountain"></div>
+                <div id="ground"></div>
+                <h2 id="logo_p">Strange Chess</h2>
+            </div>
+            <div id="auth_form" class="full_screen">
+                <section class="container login">
+                    <h2>Login</h2>
+                    <span id="goto_register">
+                        I don't have an account yet.
+                        <img src="./img/fontawesome/chevron-right.svg" alt="forward">
+                    </span>
                     <form id="login_form">
-                        <input type="text" name="username">
-                        <input type="password" name="password">
-                        <input type="submit" value="SUBMIT">
+                        <input type="text" name="username" placeholder="Username...">
+                        <input type="password" name="password" placeholder="Password...">
+                        <button type="submit">LOGIN</button>
+                        <p id="login_error"></p>
                     </form>
+                </section>
+                <section class="container register hidden">
+                    <h2>Register now</h2>
+                    <span id="goto_login">
+                        <img src="./img/fontawesome/chevron-left.svg" alt="back">
+                        I already have an account.
+                    </span>
                     <form id="register_form">
-                        <input type="text" name="username">
-                        <input type="password" name="password">
-                        <input type="text" name="avatar">
-                        <input type="submit" value="SUBMIT">
+                        <input type="text" name="username" placeholder="Username..." required>
+                        <input type="password" name="password" id="psw" placeholder="Password..." required>
+                        <input type="password" id="psw-confirm" placeholder="Repeat password..." required>
+                        <div>
+                            <p>Select an avatar</p>
+                            <?php
+                            include("./php/auth.php");
+                            foreach ($avatars as $avatar) {
+                                echo '<label class="avatar_label">';
+                                echo '<input class="avatar_select" type="radio" name="avatar" value="' . $avatar . '" required>';
+                                echo '<img src="./img/avatars/' . $avatar . '.svg" alt="' . $avatar . '">';
+                                echo "</label>";
+                            }
+                            ?>
+                        </div>
+                        <button type="submit">REGISTER</button>
+                        <p id="register_error"></p>
                     </form>
-                    <p id="auth_error"></p>
-                </div>
-                <div id="register_success"></div>
-            </main>
+                </section>
+            </div>
+            <div id="register_success"></div>
+            </div>
         <?php endif; ?>
 
         <!-- jQuery -->
