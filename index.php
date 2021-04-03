@@ -8,20 +8,19 @@ $mode = (isset($_SESSION["user_id"])) ? 1 : 0;
 <html lang="en">
 
 <head>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, 
-    maximum-scale=1.0, user-scalable=0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta charset="UTF-8">
     <link rel="stylesheet" href="./css/core.css">
     <?php
     // DASHBOARD
     if ($mode) : ?>
         <link rel="stylesheet" href="./css/dashboard.css">
-        <title>Welcome, <?php echo $_SESSION["username"]; ?>!</title>
+        <title>Dashboard | Strange Chess</title>
     <?php
     // LOGIN SCREEN
     else : ?>
         <link rel="stylesheet" href="./css/auth.css">
-        <title>Login</title>
+        <title>Strange Chess</title>
     <?php endif; ?>
 </head>
 
@@ -30,23 +29,38 @@ $mode = (isset($_SESSION["user_id"])) ? 1 : 0;
     // DASHBOARD
     if ($mode) : ?>
         <header>
-            <img src="./img/logo.png" id="logo">
+            <?php $user_info = get_user_info(); ?>
+            <img class="user_pic" src="./img/avatars/<?php echo $user_info["avatar"]; ?>.svg" alt="Avatar">
+            <h1>Hi, <?php echo $_SESSION["username"]; ?>!</h1>
+            <div class="progress_bar">
+                <div id="strength" style="width: 
+                <?php
+                $strength = (!$user_info["total"]) ? 0 : $user_info["won"] / $user_info["total"] * 100;
+                echo $strength;
+                ?>%">
+                </div>
+            </div>
+            <p>
+                <?php echo "Strength: " . $user_info["won"] . " / " . $user_info["total"] . " (" . intval($strength) . "%)"; ?>
+            </p>
             <form id="logout_form">
-                <input type="submit" value="LOGOUT">
+                <button type="submit"><img src="./img/fontawesome/sign-out-alt.svg" alt="Log out"></button>
             </form>
         </header>
         <main>
-            <section class="menu">
-                <button id="scroll-top">TOP</button>
-                <button class="menu_btn" id="host_btn">Host new match</button>
-                <button class="menu_btn" id="join_btn">Join a match</button>
-                <div id="history">
-                    <?php
-                    function getHistory($user, $limit)
-                    {
-                        global $mysqli;
-                        $query = $mysqli->prepare(
-                            "SELECT DISTINCT `I`.* FROM `match_info` `I`
+            <section class="new_match">
+                <h2>New match</h2>
+                <button class="menu_btn" id="host_btn">HOST</button>
+                <button class="menu_btn" id="join_btn">JOIN</button>
+            </section>
+            <section id="history">
+                <h2>History</h2>
+                <?php
+                function getHistory($user, $limit)
+                {
+                    global $mysqli;
+                    $query = $mysqli->prepare(
+                        "SELECT DISTINCT `I`.* FROM `match_info` `I`
                             INNER JOIN `match_team` `T`
                             INNER JOIN `match_log` `L`
                             ON `T`.`match_id` = `I`.`id`
@@ -55,27 +69,27 @@ $mode = (isset($_SESSION["user_id"])) ? 1 : 0;
                             GROUP BY `I`.`id` HAVING MAX(`L`.`number` > 0)
                             ORDER BY `T`.`last_ping` DESC
                             LIMIT ?"
-                        );
-                        $query->bind_param("ii", $user, $limit);
-                        $query->execute();
-                        $result = $query->get_result();
-                        if (!$result) return null;
-                        return $result->fetch_all(MYSQLI_ASSOC);
-                    }
+                    );
+                    $query->bind_param("ii", $user, $limit);
+                    $query->execute();
+                    $result = $query->get_result();
+                    if (!$result) return null;
+                    return $result->fetch_all(MYSQLI_ASSOC);
+                }
 
-                    $list = getHistory($_SESSION["user_id"], 10);
-                    foreach ($list as $match) {
-                        echo '<div class="match_history" id="' . $match["id"] . '">';
-                        echo '<p>' . $match["id"] . '</p>';
-                        echo '<a href="./match.php?replay=' . $match["id"] . '">REPLAY</a>';
-                        echo "</div>";
-                    }
-                    ?>
-                </div>
+                $list = getHistory($_SESSION["user_id"], 10);
+                foreach ($list as $match) {
+                    echo '<div class="match_history" id="' . $match["id"] . '">';
+                    echo '<p>' . $match["id"] . '</p>';
+                    echo '<a href="./match.php?replay=' . $match["id"] . '">REPLAY</a>';
+                    echo "</div>";
+                }
+                ?>
             </section>
-            <div id="join_dialog" class="dialog">
-                <div class="dialog_content">
-                    <span id="dialog_close">CLOSE</span>
+        </main>
+        <div id="overlay" class="hidden">
+            <div class="box">
+                <section id="host">
                     <form id="host_form">
                         <h2>Host</h2>
                         <input type="hidden" name="action" value="host">
@@ -85,7 +99,6 @@ $mode = (isset($_SESSION["user_id"])) ? 1 : 0;
                         <label for="4">4</label><br>
                         <input type="radio" name="num_players" value="6">
                         <label for="6">6</label>
-
                         <label class="switch">
                             <input type="checkbox" id="public" name="public" value="1" checked>
                             <span class="slider round"></span>
@@ -93,21 +106,23 @@ $mode = (isset($_SESSION["user_id"])) ? 1 : 0;
 
                         <input type="submit" value="HOST">
                     </form>
+                </section>
+                <section id="join">
                     <form id="join_form" method="GET">
                         <input type="text" name="join">
                         <input type="submit" value="JOIN">
                     </form>
                     <div id="available_matches_list"></div>
-                </div>
+                </section>
             </div>
-            <div id="wait">
-                <h1>Waiting...</h1>
-                <div id="players_list">
-                </div>
-                <a id="share_whatsapp" href="#" target="_blank">Share with WhatsApp</a>
-                <p id="match_id"></p>
+        </div>
+        <div id="wait" style="display: none">
+            <h1>Waiting...</h1>
+            <div id="players_list">
             </div>
-        </main>
+            <a id="share_whatsapp" href="#" target="_blank">Share with WhatsApp</a>
+            <p id="match_id"></p>
+        </div>
     <?php
     // LOGIN SCREEN
     else : ?>
@@ -115,8 +130,15 @@ $mode = (isset($_SESSION["user_id"])) ? 1 : 0;
             <div id="skyline"></div>
             <div id="ground"></div>
             <h2 id="logo">Strange<br>Chess</h2>
+            <div id="scroll_down">
+                <p>Start</p>
+                <img src="./img/fontawesome/chevron-down.svg" alt="Scroll down">
+            </div>
         </div>
         <div id="auth_form" class="full_screen">
+            <div id="scroll_up">
+                <img src="./img/fontawesome/chevron-down.svg" alt="Scroll up">
+            </div>
             <section class="container login">
                 <h2>Login</h2>
                 <span id="goto_register">
@@ -177,3 +199,22 @@ $mode = (isset($_SESSION["user_id"])) ? 1 : 0;
 </body>
 
 </html>
+
+
+<?php
+function get_user_info()
+{
+    global $mysqli;
+    $query = $mysqli->prepare(
+        "SELECT * FROM
+        `user` WHERE `id` = ?"
+    );
+    $query->bind_param("i", $_SESSION["user_id"]);
+    $query->execute();
+    $result = $query->get_result();
+    if (!$result)
+        return NULL;
+    return $result->fetch_array();
+}
+
+?>

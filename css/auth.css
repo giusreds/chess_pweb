@@ -12,6 +12,7 @@ body {
 /* Auth banners */
 
 .container {
+    z-index: 5;
     top: 50%;
     transform: translateY(-50%);
     background-color: white;
@@ -152,6 +153,45 @@ input:focus,
 
 .avatar_select:checked + img {
     outline: 2px solid black;
+}
+
+/* Scroll up-down */
+
+#scroll_up,
+#scroll_down {
+    z-index: 4;
+    position: absolute;
+    text-align: center;
+    margin: 20px auto;
+    position: absolute;
+    width: 100%;
+    height: auto;
+    pointer-events: all !important;
+    cursor: pointer;
+}
+
+#scroll_up img,
+#scroll_down img{
+    width: 40px;
+}
+
+#scroll_down p{
+    margin: 0;
+    font-size: 1.6em;
+}
+
+#scroll_down {
+    top: auto;
+    bottom: 0;
+}
+
+#scroll_up {
+    top: 0;
+    bottom: auto;
+}
+
+#scroll_up img {
+    transform: rotate(180deg);
 }
 
 /* Parallax effect*/

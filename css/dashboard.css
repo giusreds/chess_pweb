@@ -1,12 +1,145 @@
-body, main {
-    background-color: var(--primary-accent);
+header {
+    padding: 30px 0;
+    background-color: var(--secondary-accent);
+    position: relative;
+    text-align: center;
+    top: 0;
+    width: 100%;
+    height: auto;
 }
 
-header {
-    width: 100%;
-    height: 100px;
+body {
+    background-color: white;
+}
+
+.user_pic {
+    margin: 0 auto;
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+}
+
+#logout_form {
+    display: block;
+    position: absolute;
+    top: 20px;
+    right: 20px;
+}
+
+#logout_form button {
+    width: 56px;
+    height: 56px;
+    color: white;
+    background-color: transparent;
+    cursor: pointer;
+    border: none;
+    transition: transform 0.2s ease;
+}
+
+button:hover {
+    transform: scale(1.05);
+}
+
+button {
+    display: block;
+    width: 220px;
+    height: 40px;
+    margin: 5px auto;
+    color: white;
+    font-size: 1.4em;
+    background-color: var(--primary-accent);
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+}
+
+main {
+    text-align: center;
+    padding: 20px;
+    position: relative;
+    margin: 20px auto;
+    width: 660px;
+    height: auto;
+    color: black;
+}
+
+.new_match {
+    color: white;
+    background-color: black;
+    border-radius: 5px;
+    padding: 2px 10px 22px;
+}
+
+.match_history {
+    margin: 5px 0;
+    background-color: #eeeeee;
+    border-radius: 5px;
+    padding: 2px;
+}
+
+main section {
+    display: block;
 }
 
 nav {
     width: 100%;
+}
+
+.progress_bar {
+    width: 400px;
+    height: 26px;
+    background-color: black;
+    margin: auto auto;
+    border-radius: 20px;
+    padding: 2px;
+}
+
+.progress_bar div {
+    width: auto;
+    margin: 2px;
+    position: relative;
+    border-radius: 11px;
+    height: 22px;
+    background-color: white;
+}
+
+
+
+
+/* Overlay */
+
+#overlay {
+    display: block;
+    top: 0;
+    left: 0;
+    position: fixed;
+    width: 100%;
+    height: 100vh;
+    z-index: 10;
+    background-color: rgba(0,0,0,0.5);
+}
+
+#overlay.hidden {
+    display: none;
+}
+
+.box {
+    top: 50%;
+    transform: translateY(-50%);
+    margin: 0 auto;
+    position: relative;
+    width: 660px;
+    background-color: white;
+    border-radius: 5px;
+}
+
+
+@media (max-width: 700px) {
+    main {
+        width: 90%;
+    }
+    .progress_bar {
+        width: 90%;
+    }
 }

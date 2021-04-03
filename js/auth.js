@@ -25,12 +25,14 @@ $(document).ready(() => {
     // Parallax scroll effect
 
     // Scroll down to login
-    $("#logo").on("click", () => {
+    $("#scroll_down").on("click", () => {
         $("#parallax").addClass("collapsing collapsed");
+        window.scroll(0, $("#auth_form").position().y);
     });
     // Scroll top to parallax
-    $("#login_error").on("click", () => {
+    $("#scroll_up").on("click", () => {
         $("#parallax").addClass("collapsing").removeClass("collapsed");
+        window.scroll(0, $("#parallax").position().y);
     });
     // Remove the transition property after transition
     $("#parallax").on("transitionend", () => {
