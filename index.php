@@ -69,6 +69,7 @@ if ($mode) check_matches_running();
         </main>
         <div id="overlay" class="hidden">
             <div class="box">
+                <img id="close_btn" src="./img/fontawesome/times.svg">
                 <section id="host">
                     <form id="host_form">
                         <h2>Host</h2>
@@ -142,7 +143,7 @@ if ($mode) check_matches_running();
                     I already have an account.
                 </span>
                 <form id="register_form">
-                    <input type="text" id="username_reg" name="username" placeholder="Username..." autocomplete="username" required>
+                    <input type="text" id="username_reg" name="username" placeholder="Username..." pattern="^[a-zA-Z0-9_]{4,21}$" autocomplete="username" required>
                     <input type="password" name="password" id="psw" placeholder="Password..." autocomplete="new-password" required>
                     <input type="password" id="psw_confirm" placeholder="Repeat password..." required>
                     <div>

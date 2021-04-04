@@ -118,11 +118,31 @@ function join_match($match_id)
         $res["started"] = 0;
         $res["error"] = 0;
         $res["players"] = get_users($match_id);
+        $connected = get_connected($match_id);
+        $res["total"] = $connected["total"];
+        $res["actual"] = $connected["actual"];
     }
     $res["id"] = $match_id;
     return $res;
 }
 
+function get_connected($id)
+{
+    global $mysqli;
+    $query = $mysqli->prepare(
+        "SELECT T.`match_id` AS `id`, COUNT(*) AS `actual`,
+        I.`num_players` AS `total`
+        FROM `match_team` T INNER JOIN `match_info` I
+        ON T.`match_id` = I.`id`
+        WHERE I.`status` IS NULL AND I.`id` = ? GROUP BY T.`match_id`"
+    );
+    $query->bind_param("s", $id);
+    $query->execute();
+    $result = $query->get_result();
+    if ($result)
+        return $result->fetch_array();
+    return null;
+}
 
 function is_match_ready($id)
 {

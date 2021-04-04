@@ -1,0 +1,54 @@
+html,
+body {
+    background-color: white;
+    height: auto;
+}
+
+h1,
+h2 {
+    width: 100%;
+    border-bottom: 1px solid grey;
+}
+
+header {
+    top: 0;
+    left: 0;
+    right: 0;
+    position: absolute;
+    background-color: var(--secondary-accent);
+    width: 100%;
+    height: 200px;
+    margin: 0;
+    text-align: center;
+}
+
+main {
+    padding: 0;
+    color: black;
+    top: 200px;
+    position: relative;
+    margin: 0 auto;
+    width: 800px;
+    background-color: white;
+    height: 100%;
+}
+
+.center {
+    padding: 10px 0;
+    width: 100%;
+    background-color: #eeeeee;
+    text-align: center;
+    line-height: 1em;
+}
+
+.logo {
+    position: relative;
+    top: 16px;
+    width: 300px;
+}
+
+@media (max-width: 800px) {
+    main {
+        width: 100%;
+    }
+}
