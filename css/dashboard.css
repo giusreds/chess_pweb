@@ -170,8 +170,7 @@ nav {
 
 #share_whatsapp {
     color: white;
-    font-weight: 700;
-    padding: 8px;
+    padding: 10px;
     background-color: #48a91f;
     border-radius: 5px;
     text-decoration: none;
@@ -193,8 +192,53 @@ nav {
     height: auto;
 }
 
+/* Match play button */
+
 .match_available a,
 .match_history a {
+    text-align: center;
+    width: 80px;
+    margin-top: 11px;
+    margin-right: 12px;
+    float: right;
+}
+
+.match_history > a {
+    width: 60px;
+    text-indent: -99999px;
+    background-image: url(../img/fontawesome/eye.svg);
+    background-position: center;
+    background-repeat: no-repeat;
+    background-origin: content-box;
+    background-size: contain;
+}
+
+a {
+    transition: transform 0.2s ease;
+}
+
+a:hover {
+    transform: scale(1.05);
+}
+
+/* Match history and available style */
+
+.match_available {
+    text-align: left;
+}
+
+.match_available h3 {
+    margin-left: 20px;
+}
+
+.match_available p {
+    position: absolute;
+    right: 120px;
+    margin: 20px;
+}
+
+.match_history > *,
+.match_available > * {
     display: inline-block;
 }
 
@@ -305,6 +349,9 @@ input:checked + .slider:before {
     }
     .box {
         width: 90%;
+    }
+    select {
+        width: 80%;
     }
 }
 

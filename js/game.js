@@ -1,6 +1,6 @@
 // Retrieve the match id from url parameter
 const match_id = new URLSearchParams(window.location.search).get("id");
-const refresh_rate = 1600;
+const refresh_rate = 1000;
 
 // Global variables
 var match_status = null;
@@ -8,7 +8,7 @@ var current_clicked = null;
 
 var refresh = null;
 
-// Appena lo script viene caricato
+// Main
 $(document).ready(() => {
     start("refresh");
     refresh = setInterval(start, refresh_rate);
@@ -41,13 +41,13 @@ function after(result) {
     if (result && !result.status) {
         switch (result.winner) {
             case "you":
-                var msg = "You won";
+                var msg = "Game over: YOU WON! Congratulations.";
                 break;
             case "opp":
-                var msg = "You lose";
+                var msg = "Game over: YOU LOSE! Not well...";
                 break;
             case "draw":
-                var msg = "Match is draw";
+                var msg = "Game over: MATCH IS DRAW!";
                 break;
         }
         clearInterval(refresh);
@@ -58,8 +58,7 @@ function after(result) {
         match_status = result;
         updateChessboard(match_status);
         clickable();
-        // TEMPORANEO
-        turno();
+        turn();
     }
 }
 
@@ -90,7 +89,7 @@ function clickCell() {
     }
 }
 
-// TEMPORANEO
+// Detect if I have to promote a pawn
 function pawnPromotion(source, destination) {
     s_r = parseInt(source.substring(0, 1));
     s_c = parseInt(source.substring(1, 2));
@@ -102,7 +101,6 @@ function pawnPromotion(source, destination) {
         promotion(source, destination);
     else moveTo(source, destination);
 }
-// FINE TEMPORANEO
 
 function removeClicked() {
     current_clicked = null;
@@ -179,8 +177,7 @@ function moveTo(source, destination, promotion = null) {
 
     removeClicked();
     match_status.yourturn = 0;
-    // TEMPORANEO
-    turno();
+    turn();
 }
 
 function nomeCella(r, c) {
@@ -189,20 +186,29 @@ function nomeCella(r, c) {
 
 // TEMPORANEA
 
-function turno() {
-    if (match_status.yourturn) {
-        document.getElementById("turn").innerHTML = "It's your turn!";
-        document.getElementById("turn").style.color = "green";
+function turn() {
+    if (match_status.yourturn){
+        $("body").addClass("yourturn");
+        $("body").removeClass("opponentturn");
     } else {
-        document.getElementById("turn").innerHTML = "Wait for your opponent...";
-        document.getElementById("turn").style.color = "red";
+        $("body").removeClass("yourturn");
+        $("body").addClass("opponentturn");
     }
 }
 
-// Temporanea promotion
-// SUPER TEMPORANEA (PROMPT NO -> USA FORM)
+// Pawn promotion
 
+var source_promotion, dest_promotion;
 function promotion(source, destination) {
-    var promotion = prompt("Promotion ( knight | queen | rook | bishop )");
-    moveTo(source, destination, promotion);
+    $("#promotion").show();
+    source_promotion = source;
+    dest_promotion = destination;
 }
+$(document).ready(
+    $(".promotion_field").on("change", function () {
+        var promotion = $("input[name='promotion']:checked").val();
+        $("#form_id").trigger("reset");
+        $("#promotion").hide();
+        moveTo(source_promotion, dest_promotion, promotion);
+    })
+);

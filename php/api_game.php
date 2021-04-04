@@ -13,22 +13,12 @@ if (
     $match_id = $_POST["id"];
     $user_id = $_SESSION["user_id"];
 
-    $found = 0;
+
+
+    if (!isMyMatch($match_id, $user_id)) exit;
+    $player_id = get_my_team($match_id, $user_id);
     checkTimeExceeded($match_id);
 
-    $query = $mysqli->prepare("SELECT * FROM `match_team` WHERE `match_id` = ?");
-    $query->bind_param("s", $match_id);
-    $query->execute();
-    $result = $query->get_result();
-    // Se la partita non esiste
-    if (!$result) return false;
-    while ($row = $result->fetch_array()) {
-        if ($row["user"] == $user_id) {
-            $player_id = $row["team"];
-            $found = 1;
-        }
-    }
-    if (!$found) exit;
     $result = getLastMove($match_id);
 
     $number = $result["number"];
@@ -41,6 +31,7 @@ if (
         case "pull":
             $match_status = fetchMatch($result, $player_id);
             clean($match_status["chessboard"]);
+            $match_status["control"] = $result["control"];
             $match_status["changed"] = 1;
             // Se l'impronta e'uguale all'ultima registrata, ritorno
             // soltanto {"r":0} per indicare di non eseguire il refresh
@@ -97,7 +88,6 @@ if (
                 $chessboard = json_encode($aftermove[0]);
                 $captured = json_encode($aftermove[1]);
 
-                // temporaneo
                 $number++;
                 $turn = ($player_id + 1) % 2;
                 // Aggiorno nel DataBase
@@ -116,6 +106,7 @@ if (
                 // Se tutto ok
                 // ridondante
                 $match_status = fetchMatch($result, $player_id);
+                $match_status["control"] = $result["control"];
                 clean($match_status["chessboard"]);
                 // Se l'impronta e'uguale all'ultima registrata, ritorno
                 // soltanto {"r":0} per indicare di non eseguire il refresh

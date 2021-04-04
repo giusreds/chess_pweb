@@ -4,8 +4,8 @@ include_once("./php/mysql.php");
 include_once("./php/game.php");
 $team = NULL;
 
-// L'ID della partita viene passato come parametro GET
-// Se non posso partecipare alla partita, reindirizza alla home
+// Match ID must be passed with GET
+// If invalid, return home
 if (isset($_GET["id"])) {
     $mode = 1;
     $match_id = $_GET["id"];
@@ -20,33 +20,68 @@ if (
     || !isMyMatch($match_id, $_SESSION["user_id"])
 )
     header("Location: ./");
+
+
+$team = get_my_team($match_id, $_SESSION["user_id"]);
 ?>
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Partita</title>
     <meta charset="UTF-8">
-
+    <link rel="icon" href="./img/icons/icon_16.png">
+    <link rel="manifest" href="./res/manifest.webmanifest">
     <link rel="stylesheet" href="./css/core.css">
     <!-- Board style -->
     <link rel="stylesheet" href="./css/board.css">
     <?php if ($mode) : ?>
         <!-- Game elements -->
         <link rel="stylesheet" href="./css/game.css">
+        <title>Match | Strange Chess</title>
     <?php else : ?>
         <!-- Replay -->
         <link rel="stylesheet" href="./css/replay.css">
+        <title>Replay | Strange Chess</title>
     <?php endif; ?>
 
 </head>
 
 <body>
     <header>
-        <h1>Chess match</h1>
-        <h2 id="turn"></h2>
-        <p id="time"></p>
+        <?php
+        function print_players($team)
+        {
+            global $mysqli, $match_id;
+            $query = $mysqli->prepare(
+                "SELECT `U`.`username`, `U`.`id`, `U`.`avatar`
+            FROM `user` `U` INNER JOIN `match_team` `T`
+            ON `T`.`user` = `U`.`id` WHERE 
+            `T`.`match_id` = ? AND `T`.`team` = ?"
+            );
+            $query->bind_param("si", $match_id, $team);
+            $query->execute();
+            $result = $query->get_result();
+            while ($row = $result->fetch_array()) {
+                $username = ($row["username"] == $_SESSION["username"]) ? "you" : $row["username"];
+                echo '<div class="player_info" id="player_' . $row["id"] . '">';
+                echo '<img src="./img/avatars/' . $row["avatar"] . '.svg" alt="' . $username . '">';
+                echo '<h3>' . $username . '</h3>';
+                echo '</div>';
+            }
+        }
+        ?>
+        <div class="your_team">
+            <?php
+            print_players($team);
+            ?>
+        </div>
+        <div class="opponent_team">
+            <?php
+            print_players(!$team);
+            ?>
+        </div>
+        <h1 id="time"></h1>
     </header>
 
     <!-- Chess Board -->
@@ -55,12 +90,12 @@ if (
         <div id="board">
             <table class="chessboard">
                 <?php
-                // Disegno la scacchiera
+                // Draw the chessboard
                 echo "<tbody>";
                 for ($i = 0; $i < 8; $i++) {
                     echo "<tr>";
                     for ($j = 0; $j < 8; $j++) {
-                        // ID della casella (concatenazione i + j)
+                        // Cell ID (concat i + j)
                         echo "<td id=" . strval($i) . strval($j) . "></td>";
                     }
                     echo "</tr>";
@@ -81,8 +116,8 @@ if (
 
                 function pieceName($piece)
                 {
-                    global $player_id;
-                    $color = ($player_id) ? "b" : "w";
+                    global $team;
+                    $color = ($team) ? "b" : "w";
                     $piece_ = strtoupper(substr($piece, 0, 1));
                     if ($piece_ == "K") $piece_ = "N";
                     return $color . $piece_;
@@ -91,7 +126,7 @@ if (
                 $pieces = array("queen", "knight", "rook", "bishop");
                 foreach ($pieces as $piece) {
                     echo "<label>";
-                    echo '<input type="radio" name="promotion" value="' . $piece . '">';
+                    echo '<input type="radio" class="promotion_field" name="promotion" value="' . $piece . '">';
                     echo '<img src="./img/pieces/' . pieceName($piece) . '.png" alt="' . $piece . '">';
                     echo "</label>";
                 }

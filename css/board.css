@@ -5,7 +5,7 @@
 /* Chessboard */
 
 .chessboard {
-    background-color: var(--primary-accent);
+    background-color: white;
 }
 
 .chessboard,
@@ -24,11 +24,11 @@
 }
 
 .chessboard tr:nth-child(even) > td:nth-child(odd) {
-    background: var(--secondary-accent);
+    background: #aaaaaa;
 }
 
 .chessboard tr:nth-child(odd) > td:nth-child(even) {
-    background: var(--secondary-accent);
+    background: #aaaaaa;
 }
 
 .piece {
@@ -40,7 +40,7 @@
     z-index: 1;
     pointer-events: none;
     transition-property: opacity, left, top;
-    transition-duration: 0.5s, 1s, 1s;
+    transition-duration: 0.5s, 0.9s, 1s;
     transition-timing-function: ease-in-out;
 }
 
@@ -67,8 +67,13 @@
 }
 
 .game {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
     margin: auto;
-    width: 480px;
+    width: calc(var(--cell-size) * 8);
+    height: auto;
 }
 
 #board {
@@ -76,8 +81,7 @@
     width: calc(var(--cell-size) * 8);
     height: calc(var(--cell-size) * 8);
     float: left;
-    margin-top: 20px;
-    margin-bottom: 20px;
+    margin: calc(var(--cell-size) / 3) 0;
 }
 
 .captured {
@@ -94,59 +98,76 @@
     height: calc(var(--cell-size) / 2);
 }
 
-/* temporaneo */
+html,
+body {
+    overflow: hidden;
+    height: 100%;
+    background-color: white;
+    color: black;
+    margin: 0 !important;
+    padding: 0;
+    top: 0;
+}
 
-header {
+/* Users */
+
+.your_team,
+.opponent_team {
+    position: absolute;
+    width: 50%;
+    height: 200px;
+    top: 4px;
+}
+
+.your_team {
+    left: 20px;
+    text-align: left;
+}
+
+.opponent_team {
+    right: 20px;
+    text-align: right;
+}
+
+.player_info {
+    margin: 0 4px;
+    padding: 4px 10px;
+    width: 82px;
+    height: auto;
+    display: inline-block;
     text-align: center;
 }
 
-/* CHECKBOX PROMOZIONE PEDONE */
-
-/* Nasconde pulsante */
-
-[type="radio"] {
-    position: absolute;
-    opacity: 0;
-    width: 0;
-    height: 0;
+.player_info img {
+    border-radius: 50%;
+    width: 80px;
 }
 
-[type="radio"] + img {
-    cursor: pointer;
+.player_info h3 {
+    margin: 0;
+    font-size: 0.9em;
 }
 
-/* Selezionato */
-
-[type="radio"]:checked + img {
-    outline: 2px solid black;
-}
-
-#promotion {
-    display: none;
-    z-index: 4;
-    background-color: rgba(0, 0, 0, 0.5);
-    width: 100%;
-    height: 100%;
-    position: absolute;
-}
-
-#promotion > form {
-    padding: 10px;
-    margin-left: auto;
-    margin-right: auto;
-    z-index: 4;
-    background-color: white;
-    width: 400px;
-    height: 110px;
-    position: relative;
-}
-
-html,
-body {
-    width: 100%;
-    height: 100%;
+.control {
+    background-color: yellow;;
+    border-radius: 5px;
 }
 
 body {
-    background-color: white;
+    background-color: #77D1E3;
+    transition: background-color 1s ease;
+}
+
+.yourturn {
+    background-color: #A5F53D;
+}
+
+.opponentturn {
+    background-color: #df2605;
+}
+
+@media (max-width: 480px) {
+    .player_info img {
+        width: 16vw;
+    }
 }

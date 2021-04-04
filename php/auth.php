@@ -1,7 +1,7 @@
 <?php
 
 // Regular expression for the username
-$username_pattern = "^[a-zA-Z0-9_]{4,21}$";
+$username_pattern = "^[a-z0-9_]{4,21}$";
 // Valid avatars
 $avatars = range(1, 4);
 

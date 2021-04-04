@@ -10,14 +10,34 @@
     "start_url": "../",
     "icons": [
         {
-            "src": "../images/icons-192.png",
+            "src": "../img/icons/icon_16.png",
             "type": "image/png",
-            "sizes": "192x192"
+            "sizes": "16x16",
+            "purpose": "any"
         },
         {
-            "src": "../images/icons-512.png",
+            "src": "../img/icons/icon_32.png",
             "type": "image/png",
-            "sizes": "512x512"
+            "sizes": "32x32",
+            "purpose": "any"
+        },
+        {
+            "src": "../img/icons/icon_64.png",
+            "type": "image/png",
+            "sizes": "64x64",
+            "purpose": "any"
+        },
+        {
+            "src": "../img/icons/icon_256.png",
+            "type": "image/png",
+            "sizes": "256x256",
+            "purpose": "any"
+        },
+        {
+            "src": "../img/icons/icon_1024.png",
+            "type": "image/png",
+            "sizes": "1024x1024",
+            "purpose": "any"
         }
     ]
 }

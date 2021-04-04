@@ -91,6 +91,7 @@ if (!$found) exit;
 
 $match_status = fetchMatch($match_row, $player_id);
 clean($match_status["chessboard"]);
+$match_status["control"] = $match_row["control"];
 $match_status["actual"] = $number;
 $match_status["total"] = $total;
 

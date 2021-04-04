@@ -64,13 +64,13 @@ function autoPlay() {
     if (auto_play) {
         clearInterval(auto_play);
         auto_play = null;
-        var btnText = "PLAY";
+        var btnIcon = "./img/fontawesome/play.svg";
     } else {
         auto_play = setInterval(() => {
             fetch("next");
         }, autoplay_interval);
-        var btnText = "PAUSE";
+        var btnIcon = "./img/fontawesome/pause.svg";
     }
-    $("#play-btn").text(btnText);
+    $("#play-btn").css("background-image", "url(" + btnIcon + ")");  
     button_status();
 }

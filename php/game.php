@@ -22,6 +22,22 @@ function isMyMatch($match_id, $user_id)
     return false;
 }
 
+function get_my_team($match_id, $user_id)
+{
+    global $mysqli;
+    $query = $mysqli->prepare("SELECT * FROM `match_team` WHERE `match_id` = ?");
+    $query->bind_param("s", $match_id);
+    $query->execute();
+    $result = $query->get_result();
+    // Se la partita non esiste
+    if (!$result) return null;
+    while ($row = $result->fetch_array())
+        if ($row["user"] == $user_id)
+            return $row["team"];
+    return null;
+}
+
+
 // Removes unnecessary attributes from pieces info
 // Used before sending chessboard to client
 function clean(&$chessboard)
@@ -561,7 +577,6 @@ function move($chessboard, $captured, $source, $dest, $onlycapture = 0, $promoti
     $x_d = cellIndex($dest)[0];
     $y_d = cellIndex($dest)[1];
 
-    // TEMPORANEO
     if (!$onlycapture && $chessboard[$x_s][$y_s]->type == "pawn") {
         // Promozione pedone
         if ($x_d == 0 || $x_d == 7) {
@@ -614,9 +629,6 @@ function move($chessboard, $captured, $source, $dest, $onlycapture = 0, $promoti
             $chessboard[$x_d][0] = null;
         }
 
-
-    // ENPASSANT REMOVE DALL'AVVERSARIO
-    // TUTTO SUPER TEMPORANEO
     removePassant($chessboard, $chessboard[$x_d][$y_d]->owner);
 
     // Return

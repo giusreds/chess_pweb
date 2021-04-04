@@ -26,6 +26,7 @@ function updateChessboard(matchStatus) {
         for (var j = 0; j < 8; j++)
             if (chessboard[i][j]) $("#c_" + chessboard[i][j].name).remove;
     inCheck(matchStatus.incheck);
+    control(matchStatus.control);
 }
 
 // If it doesn't exist, add a new piece on the chessboard or
@@ -71,12 +72,16 @@ function inCheck(inCheck) {
     });
 }
 
+// Resize the chessboard
 $(window).on("resize", set_cell_size);
 $(document).ready(set_cell_size);
-
 function set_cell_size() {
     var width = $(window).width();
     var cell_size = width > 480 ? 60 : width / 8;
     $(":root").css("--cell-size", cell_size + "px");
-    console.log(width);
+}
+
+function control(control) {
+    $(".control").removeClass("control");
+    $("#player_" + control).addClass("control");
 }

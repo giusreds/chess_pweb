@@ -15,6 +15,8 @@ if ($mode) check_matches_running();
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta charset="UTF-8">
+    <link rel="icon" href="./img/icons/icon_16.png">
+    <link rel="manifest" href="./res/manifest.webmanifest">
     <link rel="stylesheet" href="./css/core.css">
     <?php
     // DASHBOARD
@@ -64,7 +66,7 @@ if ($mode) check_matches_running();
                 $list = getHistory($_SESSION["user_id"], 10);
                 foreach ($list as $match) {
                     echo '<div class="match_history" id="' . $match["id"] . '">';
-                    echo '<p>' . $match["id"] . '</p>';
+                    echo '<h3>' . $match["id"] . '</h3>';
                     echo '<a href="./match.php?replay=' . $match["id"] . '">REPLAY</a>';
                     echo "</div>";
                 }
@@ -80,7 +82,7 @@ if ($mode) check_matches_running();
                         <input type="hidden" name="action" value="host">
                         <label>Select the size of the match.</label>
                         <select name="num_players" id="num_players" form="host_form" required>
-                            <option value="2" selected>M (2 players)</option>
+                            <option value="2">M (2 players)</option>
                             <option value="4">L (4 players)</option>
                             <option value="6">XL (6 players)</option>
                         </select>
@@ -116,7 +118,7 @@ if ($mode) check_matches_running();
             <div id="players_list">
             </div>
             <div class="box_bottom">
-                <a id="share_whatsapp" href="#" target="_blank">Share through WhatsApp</a>
+                <a id="share_whatsapp" href="#" target="_blank">Invite through WhatsApp</a>
                 <p>Match code: <span id="match_id"></span></p>
             </div>
         </div>
@@ -159,7 +161,7 @@ if ($mode) check_matches_running();
                     I already have an account.
                 </span>
                 <form id="register_form">
-                    <input type="text" id="username_reg" name="username" placeholder="Username..." pattern="^[a-zA-Z0-9_]{4,21}$" autocomplete="username" required>
+                    <input type="text" id="username_reg" name="username" placeholder="Username..." pattern="^[a-z0-9_]{4,21}$" autocomplete="username" required>
                     <input type="password" name="password" id="psw" placeholder="Password..." autocomplete="new-password" required>
                     <input type="password" id="psw_confirm" placeholder="Repeat password..." required>
                     <div>
