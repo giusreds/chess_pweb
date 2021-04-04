@@ -7,49 +7,55 @@ var auto_play = null;
 
 $(document).ready(() => {
     fetch("restart");
+
+    $("#back-btn").on("click", () => {
+        fetch("previous");
+    });
+
+    $("#next-btn").on("click", () => {
+        fetch("next");
+    });
+
+    $("#play-btn").on("click", autoPlay);
 });
-
-$("#back-btn").on("click", () => {
-    fetch("previous");
-});
-
-$("#next-btn").on("click", () => {
-    fetch("next");
-});
-
-$("#play-btn").on("click", autoPlay);
-
 
 function fetch(action) {
     $.ajax({
         type: "POST",
         url: "./php/api_replay.php",
         data: {
-            "action": action,
-            "id": match_id
+            action: action,
+            id: match_id,
         },
         success: (result) => {
             if (result) {
                 total = result.total;
                 current = result.actual;
                 updateChessboard(result);
-                buttonConst();
+                button_status();
             }
         },
-        dataType: "json"
+        dataType: "json",
     });
 }
 
-
-function buttonConst() {
-    if (current == total)
+function button_status() {
+    if (current == total) {
         var disableNext = true;
-    else
+        if (auto_play) autoPlay();
+        var disablePlay = true;
+    }
+    else {
         var disableNext = false;
-    if (current == 0)
-        var disablePrev = true;
-    else
-        var disablePrev = false;
+        var disablePlay = false;
+    }
+    if (current == 0) var disablePrev = true;
+    else var disablePrev = false;
+    if(auto_play) {
+        disablePrev = true;
+        disableNext = true;
+    }
+    $("#play-btn").attr("disabled", disablePlay);
     $("#next-btn").attr("disabled", disableNext);
     $("#back-btn").attr("disabled", disablePrev);
 }
@@ -66,4 +72,5 @@ function autoPlay() {
         var btnText = "PAUSE";
     }
     $("#play-btn").text(btnText);
+    button_status();
 }

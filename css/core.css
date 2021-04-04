@@ -29,6 +29,59 @@ body {
     animation-timing-function: ease-out;
 }
 
+/* Forms */
+
+input,
+label {
+    width: 80%;
+    margin: 5px 0;
+    padding: 12px 15px;
+}
+
+select,
+input {
+    background-color: #eeeeee;
+    border-radius: 5px;
+    border: none;
+    padding: 12px 15px;
+    margin: 5px 0;
+}
+
+select {
+    cursor: pointer;
+}
+
+label {
+    display: block;
+    text-align: left;
+}
+
+button {
+    display: block;
+    width: 220px;
+    height: 40px;
+    margin: 5px auto;
+    color: white;
+    font-size: 1.4em;
+    background-color: var(--primary-accent);
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+select,
+button,
+input {
+    transition: transform 0.2s ease;
+}
+
+select:hover,
+button:hover,
+button:focus,
+input:focus {
+    transform: scale(1.05);
+}
+
 @keyframes fade_in {
     0% {
         opacity: 0;

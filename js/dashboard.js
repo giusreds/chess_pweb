@@ -6,7 +6,6 @@ const join_param = new URLSearchParams(location.search).get("join");
 ("use strict");
 var interval_join = null;
 
-
 // Main
 $(document).ready(() => {
     // Check if there is a join parameter
@@ -23,14 +22,14 @@ $(document).ready(() => {
     // Show the host popup
     $("#host_btn").on("click", function () {
         $("#overlay").show();
-        $("#join_form").hide();
-        $("#host_form").show();
+        $("#join").hide();
+        $("#host").show();
     });
     // Show the join popup
     $("#join_btn").on("click", function () {
         $("#overlay").show();
-        $("#join_form").show();
-        $("#host_form").hide();
+        $("#join").show();
+        $("#host").hide();
         get_matches();
     });
     // Close the dialog
@@ -82,7 +81,8 @@ function join_match(match_id) {
             switch (data.error) {
                 case 0:
                     // If the match is started
-                    if (data.started) location.href = "./match.php?id=" + data.id;
+                    if (data.started)
+                        location.href = "./match.php?id=" + data.id;
                     // If it's the first pull request
                     if (interval_join === null) {
                         // Set the interval
@@ -91,12 +91,17 @@ function join_match(match_id) {
                         }, 1000);
                         window.document.title = "Joining | Strange Chess";
                         // Generate shareable link
-                        $("#share_whatsapp").attr("href", whatsapp_link(match_id));
+                        $("#share_whatsapp").attr(
+                            "href",
+                            whatsapp_link(match_id)
+                        );
                         // Show the wait screen
                         $("main").hide();
                         $("#wait").show();
                         $("#match_id").text(match_id);
+                        $("#total_join").text(data.total);
                     }
+                    $("#actual_join").text(data.actual);
                     data.players.forEach((player) => {
                         if (!$("#player_" + player.username).length)
                             $("<div></div>")
@@ -113,7 +118,11 @@ function join_match(match_id) {
                     });
                     break;
                 default:
-                    alert("Error! The match doesn't exist or isn't valid more.");
+                    clearInterval(interval_join);
+                    interval_join = null;
+                    alert(
+                        "Error! The match doesn't exist or isn't valid anymore."
+                    );
                     location.href = "./";
             }
         },
@@ -199,6 +208,8 @@ function get_matches() {
             action: "get",
         },
         success: (data) => {
+            if (!data.length) $("#no_available").show();
+            else $("#no_available").hide();
             data.forEach((match) => {
                 add_match(match);
             });

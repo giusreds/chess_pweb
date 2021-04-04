@@ -1,10 +1,10 @@
 {
     "short_name": "Chess",
-    "name": "Collaborative Chess",
+    "name": "Strange Chess",
     "description": "Play chess with your friends!",
     "lang": "en",
-    "theme_color": "#3367D6",
-    "background_color": "#3367D6",
+    "theme_color": "#af211e",
+    "background_color": "#f91d17",
     "display": "standalone",
     "orientation": "portrait",
     "start_url": "../",

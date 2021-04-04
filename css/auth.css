@@ -95,52 +95,14 @@ form {
     height: 100%;
 }
 
-input,
-label {
-    width: 80%;
-    margin: 5px 0;
-    padding: 12px 15px;
-}
-
-input {
-    background-color: #eeeeee;
-    border-radius: 5px;
-    border: none;
-    padding: 12px 15px;
-    margin: 5px 0;
-}
-
-label {
-    display: block;
-    text-align: left;
-}
-
-button {
-    display: block;
-    width: 220px;
-    height: 40px;
-    margin: 5px auto;
-    color: white;
-    font-size: 1.4em;
-    background-color: var(--primary-accent);
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-}
-
 /* Form elements transitions */
 
 .container span,
-button,
-input,
 .avatar_select + img {
     transition: transform 0.2s ease;
 }
 
 .container span:hover,
-button:hover,
-button:focus,
-input:focus,
 .avatar_select:hover + img {
     transform: scale(1.05);
 }

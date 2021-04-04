@@ -1,4 +1,8 @@
 <?php
+
+// This index provides both the login screen
+// and the dashboard depending on the session
+
 session_start();
 include("./php/mysql.php");
 // If logged in, load the dashboard, else the login screen
@@ -69,40 +73,52 @@ if ($mode) check_matches_running();
         </main>
         <div id="overlay" class="hidden">
             <div class="box">
-                <img id="close_btn" src="./img/fontawesome/times.svg">
+                <img id="close_btn" src="./img/fontawesome/times.svg" alt="Close">
                 <section id="host">
+                    <h2>Host</h2>
                     <form id="host_form">
-                        <h2>Host</h2>
                         <input type="hidden" name="action" value="host">
-                        <input type="radio" name="num_players" value="2" required>
-                        <label for="2">2</label><br>
-                        <input type="radio" name="num_players" value="4">
-                        <label for="4">4</label><br>
-                        <input type="radio" name="num_players" value="6">
-                        <label for="6">6</label>
-                        <label class="switch">
-                            <input type="checkbox" id="public" name="public" value="1" checked>
-                            <span class="slider round"></span>
-                        </label>
-
-                        <input type="submit" value="HOST">
+                        <label>Select the size of the match.</label>
+                        <select name="num_players" id="num_players" form="host_form" required>
+                            <option value="2" selected>M (2 players)</option>
+                            <option value="4">L (4 players)</option>
+                            <option value="6">XL (6 players)</option>
+                        </select>
+                        <p>PRIVATE&nbsp;
+                            <label class="switch">
+                                <input type="checkbox" name="public" checked>
+                                <span class="slider"></span>
+                            </label>
+                            &nbsp;PUBLIC
+                        </p>
+                        <button type="submit">HOST</button>
                     </form>
                 </section>
                 <section id="join">
+                    <h2>Join a match</h2>
                     <form id="join_form" method="GET">
-                        <input type="text" name="join">
-                        <input type="submit" value="JOIN">
+                        <input type="text" name="join" placeholder="Insert the match code here..." required>
+                        <button type="submit">JOIN</button>
                     </form>
-                    <div id="available_matches_list"></div>
+                    <h3>Public matches</h3>
+                    <p id="no_available">There isn't any public match available at the moment.</p>
+                    <div id="available_matches_list">
+                    </div>
                 </section>
             </div>
         </div>
         <div id="wait" style="display: none">
-            <h1>Waiting...</h1>
+            <div class="box_top">
+                <h1>JOINING</h1>
+                <h3>Connected <span id="actual_join"></span> of <span id="total_join"></span></h3>
+                <p>Please wait...</p>
+            </div>
             <div id="players_list">
             </div>
-            <a id="share_whatsapp" href="#" target="_blank">Share with WhatsApp</a>
-            <p id="match_id"></p>
+            <div class="box_bottom">
+                <a id="share_whatsapp" href="#" target="_blank">Share through WhatsApp</a>
+                <p>Match code: <span id="match_id"></span></p>
+            </div>
         </div>
     <?php
     // LOGIN SCREEN
