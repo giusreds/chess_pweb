@@ -3,6 +3,7 @@ session_start();
 include("./php/mysql.php");
 // If logged in, load the dashboard, else the login screen
 $mode = (isset($_SESSION["user_id"])) ? 1 : 0;
+if ($mode) check_matches_running();
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -56,27 +57,6 @@ $mode = (isset($_SESSION["user_id"])) ? 1 : 0;
             <section id="history">
                 <h2>History</h2>
                 <?php
-                function getHistory($user, $limit)
-                {
-                    global $mysqli;
-                    $query = $mysqli->prepare(
-                        "SELECT DISTINCT `I`.* FROM `match_info` `I`
-                            INNER JOIN `match_team` `T`
-                            INNER JOIN `match_log` `L`
-                            ON `T`.`match_id` = `I`.`id`
-                            AND `L`.`id` = `I`.`id`
-                            WHERE `T`.`user` = ?
-                            GROUP BY `I`.`id` HAVING MAX(`L`.`number` > 0)
-                            ORDER BY `T`.`last_ping` DESC
-                            LIMIT ?"
-                    );
-                    $query->bind_param("ii", $user, $limit);
-                    $query->execute();
-                    $result = $query->get_result();
-                    if (!$result) return null;
-                    return $result->fetch_all(MYSQLI_ASSOC);
-                }
-
                 $list = getHistory($_SESSION["user_id"], 10);
                 foreach ($list as $match) {
                     echo '<div class="match_history" id="' . $match["id"] . '">';
@@ -134,6 +114,9 @@ $mode = (isset($_SESSION["user_id"])) ? 1 : 0;
                 <p>Start</p>
                 <img src="./img/fontawesome/chevron-down.svg" alt="Scroll down">
             </div>
+            <a id="about_link" href="./about.html" target="_self">
+                <img src="./img/fontawesome/question-circle.svg" alt="About">
+            </a>
         </div>
         <div id="auth_form" class="full_screen">
             <div id="scroll_up">
@@ -202,6 +185,7 @@ $mode = (isset($_SESSION["user_id"])) ? 1 : 0;
 
 
 <?php
+// Get current user info
 function get_user_info()
 {
     global $mysqli;
@@ -216,5 +200,51 @@ function get_user_info()
         return NULL;
     return $result->fetch_array();
 }
+// Checks if there is a match running and in
+// case redirects to it
+function check_matches_running()
+{
+    global $mysqli;
+    // Checks if there were matches suspended
+    // and adjusts them
+    $query = $mysqli->prepare(
+        "SELECT `I`.`id` FROM
+        `match_info` `I` INNER JOIN
+        `match_team` `T` ON
+        `I`.`id` = `T`.`match_id`
+        WHERE `T`.`user`= ? AND
+        `I`.`status` IS NOT NULL AND
+         `I`.`winner` IS NULL"
+    );
+    $query->bind_param("i", $_SESSION["user_id"]);
+    $query->execute();
+    $result = $query->get_result();
+    if ($result && $row = $result->fetch_array()) {
+        header("Location: ./match.php?id=" . $row["id"]);
+    }
+}
+
+// Get the latest matches
+function getHistory($user, $limit)
+{
+    global $mysqli;
+    $query = $mysqli->prepare(
+        "SELECT DISTINCT `I`.* FROM `match_info` `I`
+            INNER JOIN `match_team` `T`
+            INNER JOIN `match_log` `L`
+            ON `T`.`match_id` = `I`.`id`
+            AND `L`.`id` = `I`.`id`
+            WHERE `T`.`user` = ?
+            GROUP BY `I`.`id` HAVING MAX(`L`.`number` > 0)
+            ORDER BY `T`.`last_ping` DESC
+            LIMIT ?"
+    );
+    $query->bind_param("ii", $user, $limit);
+    $query->execute();
+    $result = $query->get_result();
+    if (!$result) return null;
+    return $result->fetch_all(MYSQLI_ASSOC);
+}
+
 
 ?>

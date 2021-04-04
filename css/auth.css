@@ -9,6 +9,28 @@ body {
     overflow: hidden;
 }
 
+/* Link about page */
+#about_link {
+    display: block;
+    position: absolute;
+    top: 32px;
+    left: 36px;
+    color: white;
+    background-color: transparent;
+    cursor: pointer;
+    border: none;
+    transition: transform 0.2s ease;
+}
+
+#about_link img {
+    width: 40px;
+    height: 40px;
+}
+
+#about_link:hover {
+    transform: scale(1.05);
+}
+
 /* Auth banners */
 
 .container {
@@ -171,11 +193,11 @@ input:focus,
 }
 
 #scroll_up img,
-#scroll_down img{
+#scroll_down img {
     width: 40px;
 }
 
-#scroll_down p{
+#scroll_down p {
     margin: 0;
     font-size: 1.6em;
 }

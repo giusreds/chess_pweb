@@ -18,10 +18,6 @@ switch ($action) {
         if (isset($_POST["id"]))
             echo json_encode(join_match($_POST["id"]));
         break;
-    case "verify":
-        if (isset($_POST["id"]))
-            verify($_POST["id"]);
-        break;
     case "get":
         get_available();
         break;
@@ -41,7 +37,7 @@ function host()
     global $mysqli;
     $query = $mysqli->prepare(
         "SELECT COUNT(*) AS `count`
-        FROM `match_info` `I` 
+        FROM `match_info` `I`
             INNER JOIN `match_team` `T`
             ON `I`.`id` = `T`.`match_id`
         WHERE `I`.`status` IS NULL AND
@@ -69,30 +65,61 @@ function host()
     return join_match($match_id);
 }
 
-
-function join_match($match_id)
+function is_match_joinable($match_id)
 {
     global $mysqli;
     $query = $mysqli->prepare(
         "SELECT COUNT(*) AS `count`
-        FROM `match_info` 
-        WHERE `id` = ? AND `status` IS NULL"
+        FROM `match_info` WHERE 
+        `winner` IS NULL AND
+        `id` = ?"
     );
     $query->bind_param("s", $match_id);
     $query->execute();
     $result = $query->get_result();
     $row = $result->fetch_array();
-    if (!$row["count"]) error();
-    // Insert in match_team
-    $query1 = $mysqli->prepare(
-        "INSERT INTO `match_team` (`match_id`, `user`) 
-        VALUES (?, ?)"
-    );
-    $query1->bind_param("si", $match_id, $_SESSION["user_id"]);
-    $query1->execute();
+    if ($row["count"]) return 1;
+    return 0;
+}
+
+
+
+function join_match($match_id)
+{
+    global $mysqli;
+    if (!is_match_joinable($match_id))
+        $res["error"] = 1;
+    else
+    if (is_match_started($match_id)) {
+        $query = $mysqli->prepare(
+            "SELECT COUNT(*) AS `count`
+            FROM `match_team` WHERE
+            `user` = ? AND `match_id` = ?"
+        );
+        $query->bind_param("is", $_SESSION["user_id"], $match_id);
+        $query->execute();
+        $result = $query->get_result();
+        $row = $result->fetch_array();
+        if (!$row["count"])
+            $res["error"] = 1;
+        else {
+            $res["error"] = 0;
+            $res["started"] = 1;
+        }
+    } else {
+        // Insert in match_team
+        $query1 = $mysqli->prepare(
+            "REPLACE INTO `match_team` (`match_id`, `user`, `last_ping`) 
+        VALUES (?, ?, CURRENT_TIMESTAMP)"
+        );
+        $query1->bind_param("si", $match_id, $_SESSION["user_id"]);
+        $query1->execute();
+        start_match($match_id);
+        $res["started"] = 0;
+        $res["error"] = 0;
+        $res["players"] = get_users($match_id);
+    }
     $res["id"] = $match_id;
-    $res["error"] = 0;
-    start_match($match_id);
     return $res;
 }
 
@@ -100,12 +127,16 @@ function join_match($match_id)
 function is_match_ready($id)
 {
     global $mysqli;
-    $query = "SELECT T.`match_id` AS `id`, COUNT(*) AS `actual`,
+    $query = $mysqli->prepare(
+        "SELECT T.`match_id` AS `id`, COUNT(*) AS `actual`,
     I.`num_players` AS `total`
     FROM `match_team` T INNER JOIN `match_info` I
     ON T.`match_id` = I.`id`
-    WHERE I.`status` IS NULL AND I.`id` = '{$id}' GROUP BY T.`match_id`";
-    $result = $mysqli->query($query);
+    WHERE I.`status` IS NULL AND I.`id` = ? GROUP BY T.`match_id`"
+    );
+    $query->bind_param("s", $id);
+    $query->execute();
+    $result = $query->get_result();
     if (!$result) return false;
     $row = $result->fetch_array();
     if ($row["total"] == $row["actual"])
@@ -116,8 +147,12 @@ function start_match($match_id)
 {
     global $mysqli;
     if (is_match_ready($match_id)) {
-        $query2 = "SELECT `user` FROM `match_team` WHERE `match_id` = '{$match_id}'";
-        $result = $mysqli->query($query2);
+        $query = $mysqli->prepare(
+            "SELECT `user` FROM `match_team` WHERE `match_id` = ?"
+        );
+        $query->bind_param("s", $match_id);
+        $query->execute();
+        $result = $query->get_result();
         $users = array();
         while ($row = $result->fetch_array()) {
             array_push($users, $row["user"]);
@@ -125,21 +160,23 @@ function start_match($match_id)
         shuffle($users);
         for ($i = 0; $i < count($users); $i++) {
             $team = $i % 2;
-            $query = "UPDATE `match_team`
-                SET `team` = '{$team}'
-                WHERE `match_id` = '{$match_id}' AND
-                `user` = '{$users[$i]}'";
-            $mysqli->query($query);
+            $query = $mysqli->prepare(
+                "UPDATE `match_team`
+                SET `team` = ?
+                WHERE `match_id` = ? 
+                AND `user` = ?"
+            );
+            $query->bind_param("isi", $team, $match_id, $users[$i]);
+            $query->execute();
         }
-
         // Change match status
-        $query1 = $mysqli->prepare(
+        $query = $mysqli->prepare(
             "UPDATE `match_info`
             SET `status` = 1
             WHERE `id` = ?"
         );
-        $query1->bind_param("s", $match_id);
-        $query1->execute();
+        $query->bind_param("s", $match_id);
+        $query->execute();
 
         $string = file_get_contents("../res/new_chessboard.json");
         $json_sc = json_encode(json_decode($string)->chessboard);
@@ -170,26 +207,6 @@ function delete_host()
     $query->execute();
 }
 
-// Delete players from matches if they disconnect
-function delete_player()
-{
-    global $mysqli;
-    global $disconnected;
-    $query = $mysqli->prepare(
-        "DELETE `T` FROM `match_team` `T`
-        WHERE TIME_TO_SEC(TIMEDIFF(CURRENT_TIMESTAMP, `T`.`last_ping`)) > ?
-        AND `T`.`match_id` IN (
-            SELECT `id`
-            FROM `match_info`
-            WHERE `status` IS NULL
-            AND `host` <> `T`.`user`
-        )"
-    );
-    $query->bind_param("i", $disconnected);
-    $query->execute();
-}
-
-
 function ping($match_id)
 {
     global $mysqli;
@@ -203,24 +220,17 @@ function ping($match_id)
     $query->execute();
 }
 
-function verify($match_id)
+function is_match_started($match_id)
 {
     global $mysqli;
     ping($match_id);
     delete_host();
-    delete_player();
     $query = "SELECT COUNT(*) AS `count` FROM `match_log` WHERE `id` = '{$match_id}'";
     $result = $mysqli->query($query);
     $row = $result->fetch_array();
-    $resp["players"] = get_users($match_id);
-    if ($row["count"] > 0) {
-        $resp["status"] = 1;
-        echo json_encode($resp);
-        exit;
-    }
-    $resp["status"] = 0;
-    echo json_encode($resp);
-    exit;
+    if ($row["count"] > 0)
+        return 1;
+    return 0;
 }
 
 function get_users($match_id)
@@ -245,8 +255,7 @@ function get_users($match_id)
 function get_available()
 {
     global $mysqli;
-    //delete_host();
-    //delete_player();
+    delete_host();
     $user_id = $_SESSION["user_id"];
     $matches = array();
     include("./mysql.php");

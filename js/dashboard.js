@@ -3,17 +3,13 @@ const location_no_param =
     location.protocol + "//" + location.host + location.pathname;
 // Eventual GET parameter to directly join a match
 const join_param = new URLSearchParams(location.search).get("join");
-// Store the match in wich join
-var match_to_join = null;
 
-const matches_refresh_rate = 5000;
-var refresh_matches = null;
+var interval_join = null;
 
 // Main
 $(document).ready(() => {
     // Check if there is a join parameter
     if (join_param) join_match(join_param);
-    console.log(location_no_param);
 
     // Host match
     $("#host_form").submit((e) => {
@@ -35,21 +31,7 @@ $(document).ready(() => {
     });
 });
 
-$("#host").submit(function (e) {
-    e.preventDefault();
-    $.ajax({
-        type: "POST",
-        url: "./php/api_join.php",
-        data: $(this).serialize(),
-        success: function (data) {
-            $("#match_id").text(data.id);
-            match_to_join = data.id;
-            $("#share_whatsapp").attr("href", WhatsAppLink(match_to_join));
-            setInterval(wait, 1000);
-        },
-    });
-});
-
+// Request to create a match
 function host_match(event) {
     event.preventDefault();
     $.ajax({
@@ -57,10 +39,39 @@ function host_match(event) {
         url: "./php/api_join.php",
         data: $(event.target).serialize(),
         success: function (data) {
-            $("#match_id").text(data.id);
-            match_to_join = data.id;
-            $("#share_whatsapp").attr("href", WhatsAppLink(match_to_join));
-            setInterval(wait(data.id), 1000);
+            if (!data.error) location.href = "./?join=" + data.id;
+            else {
+                alert("There was an error.");
+                location.reload();
+            }
+        },
+    });
+}
+
+function join_match(match_id) {
+    match_to_join = match_id;
+    $.ajax({
+        type: "POST",
+        url: "./php/api_join.php",
+        data: {
+            action: "join",
+            id: match_id,
+        },
+        success: function (data) {
+            if (!data.error) {
+                if (interval_join === null)
+                    interval_join = setInterval(() => {
+                        join_match(match_id);
+                    }, 1000);
+            } else {
+                alert("Problem!");
+                location.href = "./";
+            }
+            $("main").hide();
+            $("#wait").show();
+            $("#match_id").text(match_id);
+            $("#share_whatsapp").attr("href", WhatsAppLink(match_id));
+            if (data.started) location.href = "./match.php?id=" + match_id;
         },
     });
 }
@@ -74,30 +85,13 @@ function WhatsAppLink(match_id) {
     return base + encodeURI(message + match_id);
 }
 
-function join_match(match_id) {
-    match_to_join = match_id;
-    $.ajax({
-        type: "POST",
-        url: "./php/api_join.php",
-        data: {
-            action: "join",
-            id: match_id,
-        },
-        success: function (data) {
-            $("#match_id").text(match_id);
-            $("#share_whatsapp").attr("href", WhatsAppLink(match_id));
-            setInterval(wait(data.id), 1000);
-        },
-    });
-}
-
 function wait(match_id) {
     $("#wait").show();
     $.ajax({
         type: "POST",
         url: "./php/api_join.php",
         data: {
-            action: "verify",
+            action: "join",
             id: match_id,
         },
         success: function (data) {
@@ -116,7 +110,7 @@ function wait(match_id) {
                                 '.svg">'
                         );
             });
-            if (data.status) {
+            if (data.started) {
                 setTimeout(function () {
                     window.location.replace("./match.php?id=" + match_id);
                 }, 2000);
@@ -126,16 +120,16 @@ function wait(match_id) {
 }
 
 $("#host_btn").on("click", function () {
-    $("#join_dialog").show();
+    $("#overlay").show();
     $("#join_form").hide();
     $("#host_form").show();
 });
 
 $("#join_btn").on("click", function () {
-    $("#join_dialog").show();
+    $("#overlay").show();
     $("#join_form").show();
     $("#host_form").hide();
-    continuous_get_matches();
+    get_matches();
 });
 
 $("#dialog_close").on("click", function () {
@@ -164,13 +158,6 @@ function add_match(match) {
         .append(to_append);
 }
 
-function continuous_get_matches() {
-    get_matches();
-    refresh_matches = setInterval(() => {
-        get_matches();
-    }, matches_refresh_rate);
-}
-
 function get_matches() {
     $.ajax({
         type: "POST",
@@ -179,7 +166,6 @@ function get_matches() {
             action: "get",
         },
         success: (data) => {
-            console.log(data);
             data.forEach((match) => {
                 add_match(match);
             });
@@ -190,50 +176,3 @@ function get_matches() {
         if (!data.some((el) => el.id == match_id)) $(this).remove();
     });
 }
-
-function update_available_matches(data) {}
-
-$("body").addClass("visible");
-
-/*
-$(window).on("scroll", () => {
-    var value = window.scrollY;
-    $("#mountain").css("top", 250 + value * 0.5 + "px");
-    $("#ground").css("top", 350 + value * 0.15 + "px");
-    $("#logo_p").css("top", value + "px");
-    $("#moon").css({
-        "top": (200 + value * 0.6) + "px",
-        "right": (200 + value * 0.9) + "px"
-    });
-});
-*/
-
-$("#logo_p").on("click", () => {
-    /*
-    window.scrollTo({
-        top: $(".menu").position().top,
-        left: 0,
-        behavior: 'smooth'
-      });
-      
-    $('html, body').animate({
-        scrollTop: $(".menu").offset().top
-    }, 1200);*/
-    $("#parallax").addClass("collapsed");
-});
-
-$("#scroll-top").on("click", () => {
-    $("html, body").stop();
-    $("html, body").animate(
-        {
-            scrollTop: $("#parallax").offset().top,
-        },
-        1200
-    ); /*
-    window.scrollTo({
-        top: $("#parallax").position().top,
-        left: 0,
-        behavior: 'smooth'
-      });*/
-    $("#parallax").removeClass("collapsed");
-});

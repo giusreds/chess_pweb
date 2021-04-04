@@ -73,6 +73,17 @@ function setWinner($match_id, $winner)
     );
     $query->bind_param("is", $winner, $match_id);
     $query->execute();
+    // Increment on users profiles
+    $query = $mysqli->prepare(
+        "UPDATE `user` `U`
+        INNER JOIN `match_team` `T` 
+        ON `U`.`id` = `T`.`user`
+        SET `U`.`total` = `U`.`total` + 1,
+        `U`.`won` = `U`.`won` + IF(`T`.`team` = ?, 1, 0)
+        WHERE `T`.`match_id` = ?"
+    );
+    $query->bind_param("is", $winner, $match_id);
+    $query->execute();
 }
 
 // Returns an array with match status and winner
